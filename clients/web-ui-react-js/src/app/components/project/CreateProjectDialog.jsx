@@ -16,14 +16,14 @@ const CreateProjectDialog = ({ isShown, onSuccessCallback, onCloseComplete }) =>
       onSuccessCallback()
       onCloseComplete()
     }
-  }, [success, data])
+  }, [success, data, onSuccessCallback, onCloseComplete])
 
   return <Dialog
     isShown={isShown}
     title='Create a project'
     isConfirmLoading={isLoading}
     confirmLabel="Create project"
-    onConfirm={makeCall}
+    onConfirm={() => makeCall()}
     isConfirmDisabled={name === undefined}
     onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
     hasHeader={!(success && data)}

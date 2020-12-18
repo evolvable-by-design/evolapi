@@ -4,6 +4,7 @@ import { Alert, Dialog, Pane, Textarea, TextInput } from 'evergreen-ui'
 import useFetch from '../../hooks/useFetch'
 import { TaskTypes } from '../../domain/Task'
 import TaskService from '../../services/TaskService'
+import SelectInput from '../input/SelectInput'
 import WithLabel from '../input/WithLabel'
 
 const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, type }) => {
@@ -19,14 +20,14 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
       onSuccessCallback()
       onCloseComplete()
     }
-  }, [success, data])
+  }, [success, data, onSuccessCallback, onCloseComplete])
 
   return <Dialog
     isShown={true}
     title='Create task'
     isConfirmLoading={isLoading}
     confirmLabel="Create"
-    onConfirm={makeCall}
+    onConfirm={() => makeCall()}
     onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
     hasFooter={!success}
     width="700px"

@@ -19,15 +19,16 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
       onSuccessCallback()
       onCloseComplete()
     }
-  }, [success, data])
+  }, [success, data, onSuccessCallback, onCloseComplete])
 
   return <Dialog
     isShown={isShown}
     title='Update task'
     isConfirmLoading={isLoading}
+    // eslint-disable-next-line eqeqeq
     isConfirmDisabled={ { ...task, name, description, assignee, status, points } == task }
     confirmLabel="Update"
-    onConfirm={makeCall}
+    onConfirm={() => makeCall()}
     onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
     hasFooter={!success}
     width="700px"

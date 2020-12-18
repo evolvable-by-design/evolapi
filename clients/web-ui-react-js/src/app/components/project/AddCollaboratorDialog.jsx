@@ -15,14 +15,14 @@ const AddCollaboratorDialog = ({ projectId, onSuccessCallback, onCloseComplete }
       onSuccessCallback()
       onCloseComplete()
     }
-  }, [success])
+  }, [success, onSuccessCallback, onCloseComplete])
 
   return <Dialog
     isShown={true}
     title='Create task'
     isConfirmLoading={isLoading}
     confirmLabel="Create"
-    onConfirm={makeCall}
+    onConfirm={() => makeCall()}
     onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
     hasFooter={!success}
     width="700px"

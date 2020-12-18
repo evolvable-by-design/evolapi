@@ -13,10 +13,13 @@ import TaskFocus from '../task/TaskFocus'
 import UnarchiveProjectDialog from './UnarchiveProjectDialog'
 
 import useFetch from '../../hooks/useFetch'
+import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
 import TaskService from '../../services/TaskService'
 import { TaskTypes } from '../../domain/Task'
 
 const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => {
+  useUserDetailsFetcher()
+  
   const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Delete', 'Create technical story', 'Create user story' ]
   const [ operationFocus, setOperationFocus ] = useState()
   const history = useHistory()
@@ -122,7 +125,7 @@ const Tasks = ({ projectId }) => {
 
         </Pane>
 
-        <Button appearance="primary" onClick={makeCall} marginBottom={majorScale(3)}>Filter</Button>
+        <Button appearance="primary" onClick={() => makeCall()} marginBottom={majorScale(3)}>Filter</Button>
       </div>
       
       <Columns labels={['todo', 'in progress', 'review', 'QA', 'done']} tasks={tasks || []} />

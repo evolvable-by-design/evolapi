@@ -22,6 +22,7 @@ const Projects = () => {
   const isOffsetInvalid = useMemo(() => offset !== undefined && (isNaN(offset) || (!isNaN(offset) && offset < 0)), [offset])
   const isLimitInvalid = useMemo(() => limit !== undefined && (isNaN(limit) || (!isNaN(limit) && limit < 0)), [limit])
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => makeCall(), [])
 
   
@@ -65,13 +66,13 @@ const Projects = () => {
         </Pane>
       </Pane>
 
-      <Button appearance="primary" onClick={makeCall} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Update</Button>
+      <Button appearance="primary" onClick={() => makeCall()} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Update</Button>
       { !AuthenticationService.isAuthenticated() && <Alert intent="none" marginBottom={32} title="Login to see more actions."/> }
       { AuthenticationService.isAuthenticated() && 
           <Button appearance="primary" onClick={() => setShowCreateProjectDialog(true)} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Create project</Button>
       }
 
-      <CreateProjectDialog isShown={showCreateProjectDialog} onSuccessCallback={makeCall} onCloseComplete={() => setShowCreateProjectDialog(false)}/>
+      <CreateProjectDialog isShown={showCreateProjectDialog} onSuccessCallback={() => makeCall()} onCloseComplete={() => setShowCreateProjectDialog(false)}/>
 
       <ProjectCards projects={projects} />
     </>
