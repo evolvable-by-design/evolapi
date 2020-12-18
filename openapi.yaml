@@ -949,6 +949,7 @@ components:
           format: uuid
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
+<<<<<<< HEAD
         tags:
           type: array
           items:
@@ -956,6 +957,8 @@ components:
           maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
+=======
+>>>>>>> ee876a0... Implements version 2.0.0
       required: [ title, assignee ]
     TechnicalStoryUpdateRequest:
       type: object
@@ -1012,7 +1015,11 @@ components:
           $ref: '#/components/schemas/Priority'
         updatesCount:
           type: integer
+<<<<<<< HEAD
       required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+=======
+      required: [ id, title, projectId, description, assignee, lastUpdate, status, updatesCount ]
+>>>>>>> ee876a0... Implements version 2.0.0
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1033,6 +1040,7 @@ components:
           maximum: 40
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
+<<<<<<< HEAD
         tags:
           type: array
           items:
@@ -1040,6 +1048,8 @@ components:
           maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
+=======
+>>>>>>> ee876a0... Implements version 2.0.0
       required: [ title, assignee, points ]
     UserStoryUpdateRequest:
       type: object
@@ -1102,7 +1112,11 @@ components:
           $ref: '#/components/schemas/Priority'
         updatesCount:
           type: integer
+<<<<<<< HEAD
       required: [ id, title, points, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+=======
+      required: [ id, title, points, projectId, description, assignee, lastUpdate, status, updatesCount ]
+>>>>>>> ee876a0... Implements version 2.0.0
     Task:
       oneOf:
         - $ref: '#/components/schemas/TechnicalStory'
