@@ -46,27 +46,27 @@ class TaskService {
     }
   }
 
-  createTechnicalStory({ name, description, assignee, status }, projectId) {
-    const createdTask = Task.ofTechnicalStory(uuid(), projectId, name, description, assignee, status || TaskStatus.todo);
+  createTechnicalStory({ title, description, assignee, status }, projectId) {
+    const createdTask = Task.ofTechnicalStory(uuid(), projectId, title, description, assignee, status || TaskStatus.todo);
     this.tasks.push(createdTask);
     return createdTask;
   }
 
-  createUserStory({ name, description, assignee, status, points }, projectId) {
-    const createdTask = Task.ofUserStory(uuid(), projectId, name, description, assignee, points, status || TaskStatus.todo);
+  createUserStory({ title, description, assignee, status, points }, projectId) {
+    const createdTask = Task.ofUserStory(uuid(), projectId, title, description, assignee, points, status || TaskStatus.todo);
     this.tasks.push(createdTask);
     return createdTask;
   }
 
-  updateTask(taskId, { name, description, assignee, status, points }) {
+  updateTask(taskId, { title, description, assignee, status, points }) {
     const task = this.findByIdOrFail(taskId);
-    if (name) { task.name = name; }
+    if (title) { task.title = title; }
     if (description) { task.description = description; }
     if (assignee) { task.assignee = assignee; }
     if (status) { task.status = status; }
     if (points && task.isUserStory()) { task.points = points; }
 
-    if (name || description || assignee || status || points) { task._onUpdate(); }
+    if (title || description || assignee || status || points) { task._onUpdate(); }
   }
 
   updateStatus(taskId, status) {
