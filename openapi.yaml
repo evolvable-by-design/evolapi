@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 4.0.0
+  version: 5.1.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -1003,7 +1003,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -1026,7 +1026,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1076,7 +1076,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1103,7 +1103,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:
