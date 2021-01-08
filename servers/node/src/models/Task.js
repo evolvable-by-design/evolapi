@@ -83,6 +83,10 @@ const validateBusinessConstraints = (task, title, description, points, status, t
     return false;
   } else if (priority && !Object.values(Priority).includes(priority)) {
     return false;
+  } else if (tags && tags.length > 6) {
+    return false;
+  } else if (priority && !Object.values(Priority).includes(priority)) {
+    return false;
   } else {
     return true;
   }
