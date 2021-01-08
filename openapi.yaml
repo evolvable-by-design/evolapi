@@ -969,9 +969,6 @@ components:
       properties:
         name:
           type: string
-        isPublic:
-          type: boolean
-          default: false
       required: [ name ]
     ProjectsList:
       type: object
