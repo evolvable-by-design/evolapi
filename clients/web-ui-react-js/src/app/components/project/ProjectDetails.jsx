@@ -63,8 +63,8 @@ function shouldDisplayOperation(isArchived) {
 const Tasks = ({ projectId }) => {
   const [ offset, setOffset ] = useState()
   const [ limit, setLimit ] = useState()
-  const [ createdAfter, setCreatedAfter ] = useState()
-  const { makeCall, isLoading, data: tasks, error } = useTasksList(projectId, offset, limit, createdAfter)
+  const [ createdBefore, setCreatedBefore ] = useState()
+  const { makeCall, isLoading, data: tasks, error } = useTasksList(projectId, offset, limit, createdBefore)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => makeCall(), [])
@@ -111,12 +111,12 @@ const Tasks = ({ projectId }) => {
           <Pane display="flex" height="100%" marginRight={majorScale(3)} >
             <Pane width={majorScale(24)}>
               <TextInputField 
-                label='Created after'
-                value={createdAfter}
-                placeholder='Created after'
+                label='Created before'
+                value={createdBefore}
+                placeholder='Created before'
                 type='date'
                 width="100%"
-                onChange={e => setCreatedAfter(e.target.value)}
+                onChange={e => setCreatedBefore(e.target.value)}
               />
             </Pane>
           </Pane>
