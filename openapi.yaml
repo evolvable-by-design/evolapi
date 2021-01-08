@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 2.0.0
+  version: 3.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -832,9 +832,6 @@ components:
         password:
           type: string
           format: password
-        website: # to be removed later on
-          type: string
-          format: url
         email:
           type: string
           format: email
@@ -848,9 +845,6 @@ components:
         id:
           type: string
           format: uuid
-        website: # to be removed later on
-          type: string
-          format: url
         email:
           type: string
           format: email
@@ -976,6 +970,9 @@ components:
         assignee:
           type: string
           format: uuid
+        creationDate:
+          type: string
+          format: date
         lastUpdate:
           type: string
           format: date
@@ -1043,6 +1040,9 @@ components:
         assignee:
           type: string
           format: uuid
+        creationDate:
+          type: string
+          format: date
         lastUpdate:
           type: string
           format: date
