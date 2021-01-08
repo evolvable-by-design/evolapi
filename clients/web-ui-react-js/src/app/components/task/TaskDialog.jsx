@@ -53,8 +53,8 @@ const TaskDialog = ({ id, assignee, title, description, points, status, tags, pr
           { tags.map(tag => <Badge key={tag} color="neutral" marginRight={8}>{tag}</Badge>) }
         </ContainerWithLabel>}
 
-        { lastUpdate && <TextWithLabel label='Last update on'>{lastUpdate}</TextWithLabel> }
-        { creationDate && <TextWithLabel label='Created on'>{creationDate}</TextWithLabel> } 
+        { analytics?.lastUpdatedOn && <TextWithLabel label='Last update on'>{analytics.lastUpdatedOn}</TextWithLabel> }
+        { analytics?.createdOn && <TextWithLabel label='Created on'>{analytics.createdOn}</TextWithLabel> } 
       </Pane>
     </Pane>
   </Dialog>

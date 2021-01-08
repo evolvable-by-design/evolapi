@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 5.1.0
+  version: 6.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -343,6 +343,10 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
+<<<<<<< HEAD
+=======
+                projectId: '$response.body#/parentProjectId'
+>>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
@@ -417,6 +421,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+            analytics:
+              operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -631,6 +639,10 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
+<<<<<<< HEAD
+=======
+                projectId: '$response.body#/parentProjectId'
+>>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
@@ -696,6 +708,10 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
+<<<<<<< HEAD
+=======
+                projectId: '$response.body#/parentProjectId'
+>>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
@@ -1062,10 +1078,8 @@ components:
           items:
             type: string
         priority:
-          $ref: '#/components/schemas/Priority'
-        updatesCount:
-          type: integer
-      required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+          $ref: '#/components/schemas/Priority'        
+      required: [ id, title, parentProjectId, description, assignee, status ]
     UserStoryCreationRequest:
       type: object
       properties:
