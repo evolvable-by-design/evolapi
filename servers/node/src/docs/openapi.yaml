@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 6.0.0
+  version: 4.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -347,10 +347,13 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
+=======
+>>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -421,10 +424,13 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
+=======
+>>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -643,10 +649,13 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
+=======
+>>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -711,10 +720,13 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
+=======
+>>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -1023,7 +1035,11 @@ components:
           type: array
           items:
             type: string
+<<<<<<< HEAD
           maxItems: 10
+=======
+          maxItems: 6
+>>>>>>> 6ad2111... Implements v4.0.0
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -1047,7 +1063,11 @@ components:
           type: array
           items:
             type: string
+<<<<<<< HEAD
           maxItems: 10
+=======
+          maxItems: 6
+>>>>>>> 6ad2111... Implements v4.0.0
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1073,8 +1093,15 @@ components:
           items:
             type: string
         priority:
+<<<<<<< HEAD
           $ref: '#/components/schemas/Priority'        
       required: [ id, title, parentProjectId, description, assignee, status ]
+=======
+          $ref: '#/components/schemas/Priority'
+        updatesCount:
+          type: integer
+      required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+>>>>>>> 6ad2111... Implements v4.0.0
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1099,7 +1126,11 @@ components:
           type: array
           items:
             type: string
+<<<<<<< HEAD
           maxItems: 10
+=======
+          maxItems: 6
+>>>>>>> 6ad2111... Implements v4.0.0
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1127,7 +1158,11 @@ components:
           type: array
           items:
             type: string
+<<<<<<< HEAD
           maxItems: 10
+=======
+          maxItems: 6
+>>>>>>> 6ad2111... Implements v4.0.0
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:
