@@ -15,7 +15,7 @@ class TaskService {
   }
 
   listAll(projectId, createdBefore) {
-    return this.tasks.filter(task => 
+    return this.taskRepository.all().filter(task => 
       task.projectId === projectId
       && (!createdBefore || task.creationDate < createdBefore)
     );
@@ -49,14 +49,16 @@ class TaskService {
   }
 
   createTechnicalStory({ title, description, assignee, status, tags, priority }, projectId) {
-    const createdTask = Task.ofTechnicalStory(uuid(), projectId, title, description, assignee, new Date(Date.now()), status || TaskStatus.todo, tags, priority);
-    this.tasks.push(createdTask);
+    const createdTask = Task.ofTechnicalStory(uuid(), projectId, title, description, assignee, status || TaskStatus.todo, tags, priority);
+    this.taskRepository.save(createdTask);
+    this.analyticService.create(createdTask.id);
     return createdTask;
   }
 
   createUserStory({ title, description, assignee, status, points, tags, priority }, projectId) {
-    const createdTask = Task.ofUserStory(uuid(), projectId, title, description, assignee, new Date(Date.now()), points, status || TaskStatus.todo, tags, priority);
-    this.tasks.push(createdTask);
+    const createdTask = Task.ofUserStory(uuid(), projectId, title, description, assignee, points, status || TaskStatus.todo, tags, priority);
+    this.taskRepository.save(createdTask);
+    this.analyticService.create(createdTask.id);
     return createdTask;
   }
 
@@ -70,7 +72,7 @@ class TaskService {
     if (tags) { task.tags = tags }
     if (priority) { task.priority = priority }
 
-    if (title || description || assignee || status || points || tags || priorty) { task._onUpdate(); }
+    if (title || description || assignee || status || points || tags || priority) { this.analyticService.update(taskId); }
   }
 
   updateStatus(taskId, status) {
