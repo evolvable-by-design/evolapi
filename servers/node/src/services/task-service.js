@@ -72,7 +72,7 @@ class TaskService {
     if (tags) { task.tags = tags }
     if (priority) { task.priority = priority }
 
-    if (title || description || assignee || status || points || tags || priority) { this.analyticService.update(taskId); }
+    if (title || description || assignee || status || points || tags || priorty) { task._onUpdate(); }
   }
 
   updateStatus(taskId, status) {

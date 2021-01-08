@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 6.0.0
+  version: 4.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -417,10 +417,6 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-            analytics:
-              operationId: getAnalytics
-              parameters:
-                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -1019,7 +1015,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 10
+          maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -1042,7 +1038,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 10
+          maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1066,8 +1062,10 @@ components:
           items:
             type: string
         priority:
-          $ref: '#/components/schemas/Priority'        
-      required: [ id, title, parentProjectId, description, assignee, status ]
+          $ref: '#/components/schemas/Priority'
+        updatesCount:
+          type: integer
+      required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1094,7 +1092,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 10
+          maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1121,7 +1119,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 10
+          maxItems: 6
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:

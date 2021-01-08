@@ -1,5 +1,5 @@
 class Task {
-  constructor(id, title, points, projectId, description, assignee, status, isArchived, tags, priority) {
+  constructor(id, title, points, projectId, description, assignee, creationDate, lastUpdate, status, isArchived, updatesCount, tags, priority) {
     this.id = id;
     this.title = title;
     this.points = points;
@@ -8,6 +8,7 @@ class Task {
     this.assignee = assignee;
     this.status = status;
     this.isArchived = isArchived;
+    this.updatesCount = updatesCount;
     this.tags = tags;
     this.priority = priority;
   }
@@ -20,19 +21,24 @@ class Task {
     return new Task(id, title, points, projectId, description || '', assignee, status, false, tags, priority);
   }
 
-  static ofTechnicalStory(id, projectId, title, description, assignee, status, tags, priority) {
-    return new Task(id, title, undefined, projectId, description, assignee, status, false, tags, priority);
+  static ofUserStory(id, projectId, title, description, assignee, creationDate, points, status, tags, priority) {
+    return new Task(id, title, points, projectId, description || '', assignee, creationDate, new Date(Date.now()), status, false, 0, tags, priority);
   }
 
-  taskRepresentation(reverseRouter) {
+  static ofTechnicalStory(id, projectId, title, description, assignee, creationDate, status, tags, priority) {
+    return new Task(id, title, undefined, projectId, description, assignee, creationDate, new Date(Date.now()), status, false, 0, tags, priority);
+  }
+
+  taskRepresentation() {
     const representation = {
       id: this.id,
       title: this.title,
-      parentProjectId: reverseRouter.forProject(this.projectId),
+      parentProjectId: this.projectId,
       description: this.description || '',
       assignee: this.assignee,
       status: this.status,
       // isArchived: this.isArchived,
+      updatesCount: this.updatesCount,
       tags: this.tags,
       priority: this.priority
     };
