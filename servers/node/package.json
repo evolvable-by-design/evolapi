@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Server of lightweight Jira example used as the evaluation for paper",
+  "description": "Server of Evol API implemented with Node",
   "main": "index.js",
   "scripts": {
     "start": "node ./src/index.js",
