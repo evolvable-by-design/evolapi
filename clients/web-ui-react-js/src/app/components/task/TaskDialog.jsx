@@ -10,7 +10,7 @@ import TextWithLabel from '../input/TextWithLabel'
 import useFetch from '../../hooks/useFetch'
 import UserId from '../user/UserId'
 
-const TaskDialog = ({ id, assignee, title, description, points, status, tags, priority, actions }) => {
+const TaskDialog = ({ id, assignee, title, description, points, status, lastUpdate, creationDate, tags, priority, actions }) => {
   const history = useHistory()
 
   // lastupdate creationDate
