@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 4.0.0
+  version: 5.1.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -891,9 +891,6 @@ components:
       properties:
         name:
           type: string
-        isPublic:
-          type: boolean
-          default: false
       required: [ name ]
     ProjectsList:
       type: object
@@ -938,12 +935,12 @@ components:
       properties:
         title:
           type: string
-          minLength: 3
-          maxLength: 140
+          minLength: 4
+          maxLength: 80
         description:
           type: string
           minLength: 0
-          maxLength: 2000
+          maxLength: 4000
         assignee:
           type: string
           format: uuid
@@ -953,7 +950,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -962,12 +959,12 @@ components:
       properties:
         title:
           type: string
-          minLength: 3
-          maxLength: 140
+          minLength: 4
+          maxLength: 80
         description:
           type: string
           minLength: 0
-          maxLength: 2000
+          maxLength: 4000
         assignee:
           type: string
           format: uuid
@@ -977,7 +974,7 @@ components:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1018,26 +1015,26 @@ components:
       properties:
         title:
           type: string
-          minLength: 3
-          maxLength: 140
+          minLength: 4
+          maxLength: 80
         description:
           type: string
           minLength: 0
-          maxLength: 2000
+          maxLength: 4000
         assignee:
           type: string
           format: uuid
         points:
           type: number
-          minimum: 0.5
-          maximum: 40
+          minimum: 0
+          maximum: 120
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1046,26 +1043,26 @@ components:
       properties:
         title:
           type: string
-          minLength: 3
-          maxLength: 140
+          minLength: 4
+          maxLength: 80
         description:
           type: string
           minLength: 0
-          maxLength: 2000
+          maxLength: 4000
         assignee:
           type: string
           format: uuid
         points:
           type: number
-          minimum: 0.5
-          maximum: 40
+          minimum: 0
+          maximum: 120
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
           type: array
           items:
             type: string
-          maxItems: 6
+          maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:
@@ -1145,7 +1142,7 @@ components:
               - type: string
                 format: email
           minItems: 1
-          maxItems: 10
+          maxItems: 5
     HypermediaControls:
       type: object
       required:
