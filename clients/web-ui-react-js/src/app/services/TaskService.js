@@ -1,4 +1,5 @@
 import HttpClient from '../services/HttpClient'
+import { extractProjectTechnicalId } from '../utils/ResourceUtils'
 import { TaskTypes } from '../domain/Task'
 
 class TaskService {
