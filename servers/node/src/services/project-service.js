@@ -5,11 +5,14 @@ const Errors = require('../utils/errors');
 
 class ProjectService {
 
-  constructor(userService) {
+  constructor(projectRepository, userService, analyticService) {
     this.userService = userService;
-    this.projects = [
+    this.projectRepository = projectRepository;
+    this.analyticService = analyticService;
+    this.projectRepository.save(
       Project.of('0e4a7fdb-b97e-42bf-a657-a61d88efb737', 'First project ever', true, 'f19869bc-a117-4c19-bc12-d907de312632')
-    ]
+    )
+    this.analyticService.create('0e4a7fdb-b97e-42bf-a657-a61d88efb737')
   }
 
   list(userId, offset, limit) {
@@ -17,8 +20,8 @@ class ProjectService {
     const actualLimit = limit || 3;
 
     const allRelevantProjects = userId
-      ? this.projects.filter(project => project.collaborators.includes(userId))
-      : this.projects.filter(project => project.isPublic)
+      ? this.projectRepository.all().filter(project => project.collaborators.includes(userId))
+      : this.projectRepository.all().filter(project => project.isPublic)
 
     return allRelevantProjects.slice(actualOffset, actualOffset + actualLimit)
   }
@@ -27,15 +30,18 @@ class ProjectService {
     const actualOffset = offset || 0;
     const actualLimit = limit || 3;
 
-    return this.projects.filter(project => project.isPublic).slice(actualOffset, actualOffset + actualLimit);
+    return this.projectRepository.all()
+      .filter(project => project.isPublic).slice(actualOffset, actualOffset + actualLimit);
   }
 
   findById(id, userId) {
-    return this.projects.find(p => p.id === id && p.collaborators.includes(userId));
+    return this.projectRepository.all()
+      .find(p => p.id === id && p.collaborators.includes(userId));
   }
 
   findByName(name, userId) {
-    return this.projects.find(p => p.name === name && p.collaborators.includes(userId));
+    return this.projectRepository.all()
+      .find(p => p.name === name && p.collaborators.includes(userId));
   }
 
   create(name, isPublic, owner) {
@@ -45,7 +51,8 @@ class ProjectService {
       throw new Errors.BusinessRuleEnforced();
     } else {
       const createdProject = Project.of(uuid(), name, isPublic || false, owner);
-      this.projects.push(createdProject);
+      this.projectRepository.save(createdProject);
+      this.analyticService.create(createdProject.id);
       return createdProject;
     }
   }
@@ -58,7 +65,8 @@ class ProjectService {
     } else if (!project.isArchived) {
       throw new Errors.BusinessRuleEnforced();
     } else {
-      return this.projects.splice(this.projects.indexOf(project), 1);
+      this.analyticService.update(project.id);
+      return this.projectRepository.delete(project);
     }
   }
 
@@ -77,6 +85,7 @@ class ProjectService {
       throw new Errors.NotFound();
     } else {
       project.isArchived = value;
+      this.analyticService.update(project.id);
     }
   }
 
@@ -94,6 +103,7 @@ class ProjectService {
         .map(user => user.id);
 
       project.addCollaborators(collaboratorsToAdd);
+      this.analyticService.update(project.id);
     } else {
       throw new Errors.NotFound();
     }

@@ -1,17 +1,19 @@
-import React, { useEffect, useState }  from 'react'
+import React, { useEffect, useMemo, useState }  from 'react'
 import { useHistory } from 'react-router-dom'
-import { Button, Heading, Pane, Text, TextInputField, majorScale, minorScale } from 'evergreen-ui'
+import { Button, Heading, Icon, Pane, Text, TextInputField, majorScale, minorScale } from 'evergreen-ui'
 
 import { capitalize, spaceCamelCaseWord } from '../../utils/javascriptUtils'
 import AddCollaboratorDialog from './AddCollaboratorDialog'
 import ArchiveProjectDialog from './ArchiveProjectDialog'
 import DeleteProjectDialog from './DeleteProjectDialog'
 import Error from '../basis/Error'
+import StarProjectDialog from './StarProjectDialog'
 import TaskCard from '../task/TaskCard'
 import TaskCreationDialog from '../task/TaskCreationDialog'
 import TaskFocus from '../task/TaskFocus'
 import UnarchiveProjectDialog from './UnarchiveProjectDialog'
 
+import { useAppContextState } from '../../context/AppContext'
 import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
 import useTasksList from '../../hooks/useTasksList'
 import { TaskTypes } from '../../domain/Task'
@@ -19,13 +21,21 @@ import { TaskTypes } from '../../domain/Task'
 const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => {
   useUserDetailsFetcher()
   
-  const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Delete', 'Create technical story', 'Create user story' ]
+  const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Delete', 'Create technical story', 'Create user story', 'Star' ]
   const [ operationFocus, setOperationFocus ] = useState()
   const history = useHistory()
+  const { userProfile } = useAppContextState()
+
+  const isStarred = useMemo(() => {
+    if (userProfile === undefined) return false
+
+    const starredProjects = userProfile.starredProjects
+    return starredProjects && starredProjects.includes(projectId)
+  }, [userProfile, projectId])
 
   return <>
     <Pane display="flex" flexDirection="row" justifyContent="space-between" width="100%" overflow="hidden" marginBottom={majorScale(4)}>
-      <Heading size={900}>{title}</Heading>
+      <Heading size={900}>{title}{isStarred && <Icon icon="star" color="info" />}</Heading>
       <Pane display="flex" flexDirection="row" justifyContent="flex-end" flexWrap="wrap">
         { operations
             .filter(shouldDisplayOperation(isArchived))
@@ -44,6 +54,7 @@ const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => 
       : operationFocus === 'Delete' ? <DeleteProjectDialog projectId={projectId} onSuccessCallback={() => history.push('/')} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Create user story' ? <TaskCreationDialog projectId={projectId} type={TaskTypes.UserStory} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Create technical story' ? <TaskCreationDialog projectId={projectId} type={TaskTypes.TechnicalStory} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
+      : operationFocus === 'Star' ? <StarProjectDialog projectId={projectId} isStarred={isStarred} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
       : null
     }
     
