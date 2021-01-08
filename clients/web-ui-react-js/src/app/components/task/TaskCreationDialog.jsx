@@ -107,7 +107,7 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
                   values={tags}
                   setValues={setTags}
                   minItems={0}
-                  maxItems={10}
+                  maxItems={6}
                   input={({value, setValue, required}) =>
                     <TextInput value={value} type='text' width="100%" onChange={e => setValue(e.target.value)} required={required} />
                   }

@@ -15,7 +15,7 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
   const [ points, setPoints ] = useState(task.points)
   const [ tags, setTags ] = useState(task.tags || [])
   const [ priority, setPriority ] = useState(task.priority)
-  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.update(task.parentProjectId, {...task, title, description, assignee, status, points, tags, priority}))
+  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.update(task.projectId, {...task, title, description, assignee, status, points, tags, priority}))
 
   useEffect(() => {
     if (success && data) { 
@@ -108,7 +108,7 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
                   values={tags}
                   setValues={setTags}
                   minItems={0}
-                  maxItems={10}
+                  maxItems={6}
                   input={({value, setValue, required}) =>
                     <TextInput value={value} type='text' width="100%" onChange={e => setValue(e.target.value)} required={required} />
                   }
