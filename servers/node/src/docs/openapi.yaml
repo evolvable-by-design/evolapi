@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 4.0.0
+  version: 5.1.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -347,13 +347,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
-=======
->>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -424,13 +421,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
-=======
->>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -649,13 +643,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
-=======
->>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -720,13 +711,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-<<<<<<< HEAD
             analytics:
               operationId: getAnalytics
               parameters:
                 resourceId: '$response.body#/id'
-=======
->>>>>>> 6ad2111... Implements v4.0.0
         default:
           description: unexpected error
           content:
@@ -1036,10 +1024,14 @@ components:
           items:
             type: string
 <<<<<<< HEAD
+<<<<<<< HEAD
           maxItems: 10
 =======
           maxItems: 6
 >>>>>>> 6ad2111... Implements v4.0.0
+=======
+          maxItems: 10
+>>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -1064,10 +1056,14 @@ components:
           items:
             type: string
 <<<<<<< HEAD
+<<<<<<< HEAD
           maxItems: 10
 =======
           maxItems: 6
 >>>>>>> 6ad2111... Implements v4.0.0
+=======
+          maxItems: 10
+>>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1127,10 +1123,14 @@ components:
           items:
             type: string
 <<<<<<< HEAD
+<<<<<<< HEAD
           maxItems: 10
 =======
           maxItems: 6
 >>>>>>> 6ad2111... Implements v4.0.0
+=======
+          maxItems: 10
+>>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1159,10 +1159,14 @@ components:
           items:
             type: string
 <<<<<<< HEAD
+<<<<<<< HEAD
           maxItems: 10
 =======
           maxItems: 6
 >>>>>>> 6ad2111... Implements v4.0.0
+=======
+          maxItems: 10
+>>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:
