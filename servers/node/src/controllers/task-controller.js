@@ -63,16 +63,9 @@ const taskController = function(projectService, taskService) {
   const createTask = function(createFunction) {
     return (req, res) => AuthService.withAuth((req, res, _) => {
       Errors.handleErrorsGlobally(() => {
-<<<<<<< HEAD
-        const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body);
-        const { title, description, status, assignee, tags, priority } = cleanedBodyValues;
-        if (utils.isAnyEmpty([title, assignee])
-          || !validateBusinessConstraints(undefined, title, description, undefined, status, tags, priority)
-=======
         const { title, description, status, assignee, tags, priority } = req.body;
         if (utils.isAnyEmpty([title, assignee])
           || !validateBusinessConstraints(title, description, undefined, status, tags, priority)
->>>>>>> 6ad2111... Implements v4.0.0
         ) {
           Responses.badRequest(res);
         } else {
