@@ -62,7 +62,7 @@ const taskController = function(projectService, taskService) {
       Errors.handleErrorsGlobally(() => {
         const { title, description, status, assignee, tags, priority } = req.body;
         if (utils.isAnyEmpty([title, assignee])
-          || !validateBusinessConstraints(title, description, undefined, status, tags, priority)
+          || !validateBusinessConstraints(undefined, title, description, undefined, status, tags, priority)
         ) {
           Responses.badRequest(res);
         } else {
@@ -101,7 +101,7 @@ const taskController = function(projectService, taskService) {
       const projectId = req.params.projectId;
       const taskId = req.params.taskId;
 
-      const { title, description, status, points, tags, priority} = req.body;
+      const { title, description, status, points, tags, priority } = req.body;
       if (!projectService.findById(projectId, user.id)) {
         Responses.forbidden(res);
       } 
