@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 5.1.0
+  version: 6.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -347,6 +347,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+            analytics:
+              operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -417,6 +421,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+            analytics:
+              operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -635,6 +643,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+            analytics:
+              operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -699,6 +711,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
+            analytics:
+              operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -953,6 +969,9 @@ components:
       properties:
         name:
           type: string
+        isPublic:
+          type: boolean
+          default: false
       required: [ name ]
     ProjectsList:
       type: object
@@ -976,6 +995,7 @@ components:
           type: array
           items:
             type: string
+            format: uuid
       required: [ name, id, isPublic, isArchived, collaborators ]
     TasksList:
       type: object
@@ -1042,6 +1062,7 @@ components:
           type: string
         assignee:
           type: string
+          format: uuid
         status:
           $ref: '#/components/schemas/TaskStatus'
         tags:
@@ -1049,10 +1070,8 @@ components:
           items:
             type: string
         priority:
-          $ref: '#/components/schemas/Priority'
-        updatesCount:
-          type: integer
-      required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+          $ref: '#/components/schemas/Priority'        
+      required: [ id, title, parentProjectId, description, assignee, status ]
     UserStoryCreationRequest:
       type: object
       properties:

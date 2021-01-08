@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 5.1.0
+  version: 6.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -970,6 +970,9 @@ components:
       properties:
         name:
           type: string
+        isPublic:
+          type: boolean
+          default: false
       required: [ name ]
     ProjectsList:
       type: object
@@ -1023,15 +1026,7 @@ components:
           type: array
           items:
             type: string
-<<<<<<< HEAD
-<<<<<<< HEAD
           maxItems: 10
-=======
-          maxItems: 6
->>>>>>> 6ad2111... Implements v4.0.0
-=======
-          maxItems: 10
->>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee ]
@@ -1055,15 +1050,7 @@ components:
           type: array
           items:
             type: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-          maxItems: 10
-=======
-          maxItems: 6
->>>>>>> 6ad2111... Implements v4.0.0
-=======
-          maxItems: 10
->>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
+            maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     TechnicalStory:
@@ -1089,15 +1076,8 @@ components:
           items:
             type: string
         priority:
-<<<<<<< HEAD
           $ref: '#/components/schemas/Priority'        
       required: [ id, title, parentProjectId, description, assignee, status ]
-=======
-          $ref: '#/components/schemas/Priority'
-        updatesCount:
-          type: integer
-      required: [ id, title, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
->>>>>>> 6ad2111... Implements v4.0.0
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1122,15 +1102,7 @@ components:
           type: array
           items:
             type: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-          maxItems: 10
-=======
-          maxItems: 6
->>>>>>> 6ad2111... Implements v4.0.0
-=======
-          maxItems: 10
->>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
+            maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
       required: [ title, assignee, points ]
@@ -1158,15 +1130,7 @@ components:
           type: array
           items:
             type: string
-<<<<<<< HEAD
-<<<<<<< HEAD
-          maxItems: 10
-=======
-          maxItems: 6
->>>>>>> 6ad2111... Implements v4.0.0
-=======
-          maxItems: 10
->>>>>>> 8d2f024... Implements v5.1.0 for Node server and React client
+            maxItems: 10
         priority:
           $ref: '#/components/schemas/Priority'
     UserStory:
