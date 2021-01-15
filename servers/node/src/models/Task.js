@@ -24,11 +24,11 @@ class Task {
     return new Task(id, title, undefined, projectId, description, assignee, status, false, tags, priority);
   }
 
-  taskRepresentation() {
+  taskRepresentation(reverseRouter) {
     const representation = {
       id: this.id,
       title: this.title,
-      parentProjectId: this.projectId,
+      parentProjectId: reverseRouter.forProject(this.projectId),
       description: this.description || '',
       assignee: this.assignee,
       status: this.status,
@@ -80,6 +80,8 @@ const validateBusinessConstraints = (task, title, description, points, status, t
   }else if (tags && tags.length > 10) {
     return false;
   } else if (points && (points < 0 || points > 120)) {
+    return false;
+  } else if (priority && !Object.values(Priority).includes(priority)) {
     return false;
   } else {
     return true;

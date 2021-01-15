@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 6.0.0
+  version: 7.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -343,10 +343,7 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-<<<<<<< HEAD
-=======
                 projectId: '$response.body#/parentProjectId'
->>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
@@ -639,10 +636,7 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-<<<<<<< HEAD
-=======
                 projectId: '$response.body#/parentProjectId'
->>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
@@ -708,10 +702,7 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-<<<<<<< HEAD
-=======
                 projectId: '$response.body#/parentProjectId'
->>>>>>> 8081783... Implements v6.0.0 for Node server and React client
             analytics:
               operationId: getAnalytics
               parameters:
