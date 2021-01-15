@@ -20,11 +20,11 @@ function userController(userService) {
         
         const representation = HypermediaRepresentationBuilder
           .of(createdUser)
-          .representation((u) => u.withoutPasswordRepresentation())
+          .representation((u) => u.withoutPasswordRepresentation(ReverseRouter))
           .link(HypermediaControls.confirmEmail)
           .build();
 
-        res.status(201).location(ReverseRouter.forUser(createdUser)).json(representation);
+        res.status(201).location(ReverseRouter.forUser(createdUser.id)).json(representation);
       }, res);
     }
   }));
@@ -81,7 +81,7 @@ function userController(userService) {
       if (foundUser) {
         const representation = HypermediaRepresentationBuilder
           .of(foundUser)
-          .representation((u) => u.withoutPasswordRepresentation())
+          .representation((u) => u.withoutPasswordRepresentation(ReverseRouter))
           .link(HypermediaControls.listProjects)
           .link(HypermediaControls.updateUserPassword)
           .build();

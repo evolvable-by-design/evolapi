@@ -80,7 +80,7 @@ class TaskService {
   updateStatus(taskId, status) {
     const task = this.findByIdOrFail(taskId);
     task.status = status;
-    task._onUpdate();
+    this.analyticService.update(taskId);
   }
 
 }

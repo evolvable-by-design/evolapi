@@ -7,11 +7,13 @@ const utils = require('./utils');
 const Errors = require('../utils/errors');
 const Responses = require('../utils/responses');
 const AuthService = require('../services/auth-service');
+const ReverseRouter = require('../reverse-router');
+const { TechnicalIdsExtractor } = require('../utils/router-utils');
 
 function taskWithHypermediaControls(task) {
   return HypermediaRepresentationBuilder
     .of(task)
-    .representation(t => t.taskRepresentation())
+    .representation(t => t.taskRepresentation(ReverseRouter))
     .link(HypermediaControls.update(task))
     .link(HypermediaControls.delete(task))
     .link(HypermediaControls.moveToQa(task), task.status !== TaskStatus.qa)
@@ -61,13 +63,14 @@ const taskController = function(projectService, taskService) {
   const createTask = function(createFunction) {
     return (req, res) => AuthService.withAuth((req, res, _) => {
       Errors.handleErrorsGlobally(() => {
-        const { title, description, status, assignee, tags, priority } = req.body;
+        const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body);
+        const { title, description, status, assignee, tags, priority } = cleanedBodyValues;
         if (utils.isAnyEmpty([title, assignee])
           || !validateBusinessConstraints(undefined, title, description, undefined, status, tags, priority)
         ) {
           Responses.badRequest(res);
         } else {
-          const createdTask = createFunction(req.body, req.params.projectId);
+          const createdTask = createFunction(cleanedBodyValues, req.params.projectId);
           Responses.created(res, taskWithHypermediaControls(createdTask));
         }
       }, res);
@@ -112,7 +115,7 @@ const taskController = function(projectService, taskService) {
       } else if (!validateBusinessConstraints(task, title, description, points, status, tags, priority)) {
         Responses.badRequest(res);
       } else {
-        taskService.updateTask(taskId, req.body);
+        taskService.updateTask(taskId, replaceRelationUrlsWithTechnicalIds(req.body));
         Responses.noContent(res);
       }
     }, res);
@@ -175,6 +178,16 @@ const taskController = function(projectService, taskService) {
 
   return router;
 
+}
+
+function replaceRelationUrlsWithTechnicalIds(object) {
+  const toReturn = Object.assign({}, object)
+  if (toReturn['assignee']) {
+    const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn['assignee'])
+    toReturn['assignee'] = ids ? ids.userId : undefined
+  }
+
+  return toReturn
 }
 
 module.exports = taskController;
