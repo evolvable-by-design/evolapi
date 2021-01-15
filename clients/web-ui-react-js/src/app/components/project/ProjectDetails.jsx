@@ -13,7 +13,6 @@ import TaskCreationDialog from '../task/TaskCreationDialog'
 import TaskFocus from '../task/TaskFocus'
 import UnarchiveProjectDialog from './UnarchiveProjectDialog'
 
-import useFetch from '../../hooks/useFetch'
 import { useAppContextState } from '../../context/AppContext'
 import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
 import useTasksList from '../../hooks/useTasksList'
@@ -76,7 +75,7 @@ const Tasks = ({ projectId }) => {
   const [ offset, setOffset ] = useState()
   const [ limit, setLimit ] = useState()
   const [ createdBefore, setCreatedBefore ] = useState()
-  const { makeCall, isLoading, data, error } = useFetch(() => TaskService.list(projectId, offset, limit, createdBefore))
+  const { makeCall, isLoading, data, error } = useTasksList(projectId, offset, limit, createdBefore)
   const tasks = data
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

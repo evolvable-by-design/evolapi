@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 6.0.0
+  version: 7.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -302,13 +302,12 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/task/{taskId}:
+  /task/{taskId}:
     parameters: 
-      - $ref: '#/components/parameters/projectId'
       - $ref: '#/components/parameters/taskId'
     get:
       summary: Get the detail of a task
-      operationId: getProjectTaskDetails
+      operationId: getTaskDetails
       tags:
         - tasks
       responses:
@@ -320,10 +319,10 @@ paths:
                 $ref: '#/components/schemas/Task'
           links:
             update:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -333,20 +332,17 @@ paths:
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             delete:
-              operationId: deleteProjectTask
+              operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             moveToQA:
               operationId: toQATask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             complete:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -359,7 +355,7 @@ paths:
                 $ref: "#/components/schemas/Error"
     delete:
       summary: Delete a task
-      operationId: deleteProjectTask
+      operationId: deleteTask
       tags:
         - tasks
       responses:
@@ -375,7 +371,7 @@ paths:
         - bearerToken: []
     put:
       summary: Update some fields of the task
-      operationId: updateProjectTask
+      operationId: updateTask
       tags:
         - tasks
       requestBody:
@@ -394,10 +390,10 @@ paths:
                 $ref: '#/components/schemas/Task'
           links:
             update:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -407,7 +403,7 @@ paths:
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             delete:
-              operationId: deleteProjectTask
+              operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
@@ -515,15 +511,16 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/tasks:
+  /tasks:
     parameters: 
         - $ref: '#/components/parameters/projectId'
     get:
-      summary: List user tasks for a given project
-      operationId: listProjectTasks
+      summary: List user tasks
+      operationId: listTasks
       tags:
         - tasks
       parameters:
+        - $ref: '#/components/parameters/queryProjectId'
         - name: createdBefore
           in: query
           description: Minimum date of tasks to list
@@ -574,11 +571,11 @@ paths:
             createTechnicalStory:
               operationId: createTechnicalStory
               parameters:
-                projectId: '$request.path.projectId'
+                parentProjectId: "$request.query.queryProjectId"
             createUserStory:
               operationId: createUserStory
               parameters:
-                projectId: '$request.path.projectId'
+                parentProjectId: "$request.query.queryProjectId"
         default:
           description: unexpected error
           content:
@@ -587,9 +584,7 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/tasks/technicalStory:
-    parameters: 
-        - $ref: '#/components/parameters/projectId'
+  /tasks/technicalStory:
     post:
       summary: Creates a technical story
       operationId: createTechnicalStory
@@ -616,10 +611,10 @@ paths:
                 $ref: '#/components/schemas/TechnicalStory'
           links:
             update:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -629,20 +624,17 @@ paths:
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             delete:
-              operationId: deleteProjectTask
+              operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             moveToQA:
               operationId: toQATask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             complete:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -655,7 +647,7 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/tasks/userStory:
+  /tasks/userStory:
     parameters: 
       - $ref: '#/components/parameters/projectId'
     post:
@@ -684,10 +676,10 @@ paths:
                 $ref: '#/components/schemas/UserStory'
           links:
             update:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -697,20 +689,17 @@ paths:
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             delete:
-              operationId: deleteProjectTask
+              operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             moveToQA:
               operationId: toQATask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             complete:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -723,9 +712,8 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/task/{taskId}/toQa:
-    parameters: 
-      - $ref: '#/components/parameters/projectId'
+  /task/{taskId}/toQa:
+    parameters:
       - $ref: '#/components/parameters/taskId'
     put:
       description: Place the task in QA status
@@ -737,10 +725,10 @@ paths:
           description: Success
           links:
             modify:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -753,7 +741,6 @@ paths:
               operationId: toDoneTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
         default:
           description: unexpected error
           content:
@@ -762,9 +749,8 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/task/{taskId}/complete:
-    parameters: 
-      - $ref: '#/components/parameters/projectId'
+  /task/{taskId}/complete:
+    parameters:
       - $ref: '#/components/parameters/taskId'
     put:
       description: Place the task in done status
@@ -776,10 +762,10 @@ paths:
           description: Success
           links:
             modify:
-              operationId: updateProjectTask
+              operationId: updateTask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
+                parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
                 description: '$response.body#/description'
@@ -792,7 +778,6 @@ paths:
               operationId: toQATask
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
         default:
           description: unexpected error
           content:
@@ -845,15 +830,15 @@ components:
         createTechnicalStory:
           operationId: createTechnicalStory
           parameters:
-            projectId: '$response.body#/id'
+            parentProjectId: '$response.body#/id'
         createUserStory:
           operationId: createUserStory
           parameters:
-            projectId: '$response.body#/id'
+            parentProjectId: '$response.body#/id'
         listTasks:
-          operationId: listProjectTasks
+          operationId: listTasks
           parameters:
-            projectId: '$response.body#/id'
+            queryProjectId: '$response.body#/id'
         archive:
           operationId: archiveProject
           parameters:
@@ -903,6 +888,14 @@ components:
       name: resourceId
       in: path
       description: Id of any resource hold by the server
+      required: true
+      schema:
+        type: string
+        format: url
+    queryProjectId:
+      name: queryProjectId
+      in: query
+      description: Id of the project to retrieve details for
       required: true
       schema:
         type: string
@@ -1013,6 +1006,9 @@ components:
           type: string
           minLength: 4
           maxLength: 80
+        parentProjectId:
+          type: string
+          format: url
         description:
           type: string
           minLength: 0
@@ -1085,6 +1081,9 @@ components:
           type: string
           minLength: 4
           maxLength: 80
+        parentProjectId:
+          type: string
+          format: url
         description:
           type: string
           minLength: 0
