@@ -12,9 +12,8 @@ import TaskCreationDialog from '../task/TaskCreationDialog'
 import TaskFocus from '../task/TaskFocus'
 import UnarchiveProjectDialog from './UnarchiveProjectDialog'
 
-import useFetch from '../../hooks/useFetch'
 import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
-import TaskService from '../../services/TaskService'
+import useTasksList from '../../hooks/useTasksList'
 import { TaskTypes } from '../../domain/Task'
 
 const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => {
@@ -65,13 +64,12 @@ const Tasks = ({ projectId }) => {
   const [ offset, setOffset ] = useState()
   const [ limit, setLimit ] = useState()
   const [ createdAfter, setCreatedAfter ] = useState()
-  const { makeCall, isLoading, data, error } = useFetch(() => TaskService.list(projectId, offset, limit, createdAfter))
-  const tasks = data
+  const { makeCall, isLoading, data: tasks, error } = useTasksList(projectId, offset, limit, createdAfter)
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => makeCall(), [])
 
-  if (isLoading) {
+  if (isLoading && tasks === undefined) {
     return <Text>Loading...</Text>
   } else if (error) {
     return <Error error={error}/>

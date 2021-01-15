@@ -14,8 +14,24 @@ class TaskService {
       `/project/${projectId}/tasks`
     )
 
+    return TaskService._fetchAndFormatTaskListResult(url)
+  }
+
+  static async _fetchAndFormatTaskListResult(url) {
     const response = await HttpClient().get(url)
-    return response.data.tasks
+    const nextPage = response.headers['x-next']
+    const lastPage = response.headers['x-last']
+    return {
+      tasks: response.data.tasks,
+      nextPage,
+      fetchNextPage: nextPage !== undefined
+        ? async () => TaskService._fetchAndFormatTaskListResult(nextPage)
+        : undefined,
+      lastPage,
+      fetchLastPage: lastPage !== undefined
+        ? async () => TaskService._fetchAndFormatTaskListResult(lastPage)
+        : undefined,
+    }
   }
 
   static async create(projectId, type, task) {

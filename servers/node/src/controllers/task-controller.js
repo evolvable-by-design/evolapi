@@ -27,8 +27,8 @@ const taskController = function(projectService, taskService) {
     Errors.handleErrorsGlobally(() => {
       const projectId = req.params.projectId;
       const createdAfter = req.query.createdAfter;
-      const offset = req.query.offset || 0;
-      const limit = req.query.limit || 3;
+      const offset = Number(req.query.offset) || 0;
+      const limit = Number(req.query.limit) || 3;
   
       if (projectService.findById(projectId, user.id)) {
         const tasks = taskService.list(projectId, createdAfter ? new Date(createdAfter) : undefined, offset, limit);
