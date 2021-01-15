@@ -26,42 +26,40 @@ const taskController = function(projectService, taskService) {
 
   const router = express.Router();
 
-  router.get('/project/:projectId/tasks', AuthService.withAuth((req, res, user) => {
+  router.get('/tasks', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
+      const queryProjectId = req.params.queryProjectId;
       const createdBefore = req.query.createdBefore;
       const offset = Number(req.query.offset) || 0;
       const limit = Number(req.query.limit) || 3;
   
-      if (projectService.findById(projectId, user.id)) {
-        const tasks = taskService.list(projectId, createdBefore ? new Date(createdBefore) : undefined, offset, limit);
-    
-        var basePageUrl = `/project/${projectId}/tasks?`;
-        if (createdBefore) { basePageUrl += `createdBefore=${createdBefore}&`; }
-    
-        const amountOfTasks = taskService.tasksCount(projectId, createdBefore);
-        if (amountOfTasks > offset + limit - 1) {
-          res.append('X-Next', basePageUrl + `offset=${offset+limit}&limit=${limit}`);
-        }
-    
-        res.append('X-Last', basePageUrl + `offset=${amountOfTasks-limit > 0 ? amountOfTasks-limit : 0 }&limit=${limit}`);
-    
-        const representation = HypermediaRepresentationBuilder
-          .of(tasks)
-          .representation((t) => t.map(taskWithHypermediaControls))
-          .representation((t) => { return { tasks: t };})
-          .link(HypermediaControls.create(projectId))
-          .build();
+      const projectId = projectService.existsWithId(queryProjectId, user.id) ? queryProjectId : undefined
+      const tasks = taskService.list(projectId, createdBefore ? new Date(createdBefore) : undefined, offset, limit);
 
-        res.status(200).json(representation);
-      } else {
-        Responses.forbidden(res);
+      var basePageUrl = `/tasks?`;
+      if (createdBefore) { basePageUrl += `createdBefore=${createdBefore}&`; }
+      if (projectId) { basePageUrl += `queryProjectId=${projectId}&`;}
+
+      const amountOfTasks = taskService.tasksCount(projectId, createdBefore);
+      if (amountOfTasks > offset + limit - 1) {
+        res.append('X-Next', basePageUrl + `offset=${offset+limit}&limit=${limit}`);
       }
+
+      res.append('X-Last', basePageUrl + `offset=${amountOfTasks-limit > 0 ? amountOfTasks-limit : 0 }&limit=${limit}`);
+
+      const representation = HypermediaRepresentationBuilder
+        .of(tasks)
+        .representation((t) => t.map(taskWithHypermediaControls))
+        .representation((t) => ({ tasks: t }))
+        .link(HypermediaControls.create(projectId))
+        .build();
+
+      res.status(200).json(representation);
     }, res);
   }));
 
   const createTask = function(createFunction) {
-    return (req, res) => AuthService.withAuth((req, res, _) => {
+    return (req, res) => AuthService.withAuth((_, __, user) => {
       Errors.handleErrorsGlobally(() => {
         const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body);
         const { title, description, status, assignee, tags, priority } = cleanedBodyValues;
@@ -70,45 +68,35 @@ const taskController = function(projectService, taskService) {
         ) {
           Responses.badRequest(res);
         } else {
-          const createdTask = createFunction(cleanedBodyValues, req.params.projectId);
+          const createdTask = createFunction(cleanedBodyValues);
           Responses.created(res, taskWithHypermediaControls(createdTask));
         }
       }, res);
     })(req, res);
   };
 
-  router.post('/project/:projectId/tasks/technicalStory', createTask(taskService.createTechnicalStory.bind(taskService)));
+  router.post('/tasks/technicalStory', createTask(taskService.createTechnicalStory.bind(taskService)));
 
-  router.post('/project/:projectId/tasks/userStory', createTask(taskService.createUserStory.bind(taskService)));
+  router.post('/tasks/userStory', createTask(taskService.createUserStory.bind(taskService)));
 
-  router.get('/project/:projectId/task/:taskId', AuthService.withAuth((req, res, user) => {
+  router.get('/task/:taskId', AuthService.withAuth((req, res) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
       const taskId = req.params.taskId;
-  
-      if (projectService.findById(projectId, user.id)) {
-        const task = taskService.findById(taskId);
+      const task = taskService.findById(taskId);
 
-        if (task) {
-          Responses.ok(res, taskWithHypermediaControls(task));
-        } else {
-          Responses.notFound(res);
-        }
+      if (task) {
+        Responses.ok(res, taskWithHypermediaControls(task));
       } else {
-        Responses.forbidden(res);
+        Responses.notFound(res);
       }
     }, res);
   }));
 
-  router.put('/project/:projectId/task/:taskId', AuthService.withAuth((req, res, user) => {
+  router.put('/task/:taskId', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
       const taskId = req.params.taskId;
 
-      const { title, description, status, points, tags, priority } = req.body;
-      if (!projectService.findById(projectId, user.id)) {
-        Responses.forbidden(res);
-      } 
+      const { title, description, status, points, tags, priority} = req.body;
       const task = taskService.findById(taskId)
       if (!task) {
         Responses.notFound(res);
@@ -121,58 +109,41 @@ const taskController = function(projectService, taskService) {
     }, res);
   }));
 
-  router.delete('/project/:projectId/task/:taskId', AuthService.withAuth((req, res, user) => {
+  router.delete('/task/:taskId', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
       const taskId = req.params.taskId;
-  
-      if (projectService.findById(projectId, user.id)) {
-        try {
-          taskService.delete(taskId);
-          Responses.noContent(res);
-        } catch (error) {
-          if (error instanceof Errors.BusinessRuleEnforced) {
-            Responses.status(400).json(
-              HypermediaRepresentationBuilder.of({
-                errorMessage: 'The task must be archived to be removable'
-              })
-                .link(HypermediaControls.beforeDeletion())
-            )
-          } else {
-            throw error
-          }
+
+      try {
+        taskService.delete(taskId);
+        Responses.noContent(res);
+      } catch (error) {
+        if (error instanceof Errors.BusinessRuleEnforced) {
+          Responses.status(400).json(
+            HypermediaRepresentationBuilder.of({
+              errorMessage: 'The task must be archived to be removable'
+            })
+              .link(HypermediaControls.beforeDeletion())
+          )
+        } else {
+          throw error
         }
-      } else {
-        Responses.forbidden(res);
       }
     }, res);
   }));
 
-  router.put('/project/:projectId/task/:taskId/toQa', AuthService.withAuth((req, res, user) => {
+  router.put('/task/:taskId/toQa', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
       const taskId = req.params.taskId;
-  
-      if (projectService.findById(projectId, user.id)) {
-        taskService.updateStatus(taskId, TaskStatus.qa);
-        Responses.noContent(res);
-      } else {
-        Responses.forbidden(res);
-      }
+      taskService.updateStatus(taskId, TaskStatus.qa);
+      Responses.noContent(res);
     }, res);
   }));
 
-  router.put('/project/:projectId/task/:taskId/complete', AuthService.withAuth((req, res, user) => {
+  router.put('/task/:taskId/complete', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projectId = req.params.projectId;
       const taskId = req.params.taskId;
-  
-      if (projectService.findById(projectId, user.id)) {
-        taskService.updateStatus(taskId, TaskStatus.complete);
-        Responses.noContent(res);
-      } else {
-        Responses.forbidden(res);
-      }
+      taskService.updateStatus(taskId, TaskStatus.complete);
+      Responses.noContent(res);
     }, res);
   }));
 
@@ -182,9 +153,15 @@ const taskController = function(projectService, taskService) {
 
 function replaceRelationUrlsWithTechnicalIds(object) {
   const toReturn = Object.assign({}, object)
+
   if (toReturn['assignee']) {
     const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn['assignee'])
     toReturn['assignee'] = ids ? ids.userId : undefined
+  }
+
+  if (toReturn['parentProjectId']) {
+    const ids = TechnicalIdsExtractor.extractProjectIdParams(toReturn['parentProjectId'])
+    toReturn['parentProjectId'] = ids ? ids.id : undefined
   }
 
   return toReturn

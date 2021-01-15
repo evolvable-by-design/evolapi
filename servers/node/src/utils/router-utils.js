@@ -26,7 +26,7 @@ function extractTechnicalIds(resourceUrl, path) {
 const TechnicalIdsExtractor = {
   extractAnalyticIdParams: url => extractTechnicalIds(url, '/analytics/:resourceId'),
   extractProjectIdParams: url => extractTechnicalIds(url, '/project/:id'),
-  extractTaskIdParams: url => extractTechnicalIds(url, '/project/:projectId/task/:taskId'),
+  extractTaskIdParams: url => extractTechnicalIds(url, '/task/:taskId'),
   extractUserIdParams: url => extractTechnicalIds(url, '/user/:userId')
 }
 

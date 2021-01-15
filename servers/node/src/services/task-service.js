@@ -16,7 +16,7 @@ class TaskService {
 
   listAll(projectId, createdBefore) {
     return this.taskRepository.all().filter(task => 
-      task.projectId === projectId
+      projectId === undefined || task.projectId === projectId
       && (!createdBefore || task.creationDate < createdBefore)
     );
   }
@@ -48,15 +48,15 @@ class TaskService {
     }
   }
 
-  createTechnicalStory({ title, description, assignee, status, tags, priority }, projectId) {
-    const createdTask = Task.ofTechnicalStory(uuid(), projectId, title, description, assignee, status || TaskStatus.todo, tags, priority);
+  createTechnicalStory({ title, description, assignee, status, tags, priority, parentProjectId }) {
+    const createdTask = Task.ofTechnicalStory(uuid(), parentProjectId, title, description, assignee, status || TaskStatus.todo, tags, priority);
     this.taskRepository.save(createdTask);
     this.analyticService.create(createdTask.id);
     return createdTask;
   }
 
-  createUserStory({ title, description, assignee, status, points, tags, priority }, projectId) {
-    const createdTask = Task.ofUserStory(uuid(), projectId, title, description, assignee, points, status || TaskStatus.todo, tags, priority);
+  createUserStory({ title, description, assignee, status, points, tags, priority, parentProjectId }) {
+    const createdTask = Task.ofUserStory(uuid(), parentProjectId, title, description, assignee, points, status || TaskStatus.todo, tags, priority);
     this.taskRepository.save(createdTask);
     this.analyticService.create(createdTask.id);
     return createdTask;
