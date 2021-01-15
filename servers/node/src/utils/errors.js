@@ -25,6 +25,7 @@ function toHttpStatus(error) {
   } else if (error instanceof NotFound) {
     return 404;
   } else {
+    console.error(error);
     return 500;
   }
 }
