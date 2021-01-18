@@ -29,7 +29,8 @@ function projectController(projectService, userService) {
 
   router.get('/projects', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const projects = projectService.list(user.id, req.query.offset, req.query.limit);
+      const { offset, limit } = req.query
+      const projects = projectService.list(user.id, offset, limit);
       
       const representation = HypermediaRepresentationBuilder
         .of(projects)
@@ -37,6 +38,13 @@ function projectController(projectService, userService) {
         .representation((p) => { return { projects: p };})
         .link(HypermediaControls.createProject)
         .build();
+
+      const projectsCount = projectService.count(user.id)
+      if (projectsCount > offset + limit - 1) {
+        res.append('X-Next', `/projects/?offset=${offset+limit}&limit=${limit}`);
+      }
+
+      res.append('X-Last', `/projects?offset=${projectsCount-limit > 0 ? projectsCount-limit : 0 }&limit=${limit}`)
 
       res.status(200).json(representation);
     }, res);

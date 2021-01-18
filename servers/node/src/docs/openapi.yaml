@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 9.0.0
+  version: 9.1.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -9,6 +9,20 @@ info:
     email: cheron.antoine@gmail.com
 paths:
   /users:
+    get:
+      summary: List existing users public information
+      operationId: listUsers
+      tags:
+        - users
+      responses:
+        '200':
+          description: All existing users
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetailsList'
+      security: 
+        - bearerToken: []
     post:
       summary: Creates a new user (admin only)
       operationId: createUser
@@ -228,6 +242,21 @@ paths:
       responses:
         '200':
           description: 'Success'
+          headers:
+            X-Next:
+              description: Link to next page
+              operationId: listProjects
+              required: false
+              schema:
+                type: string
+                format: url
+            X-Last:
+              description: Link to last page
+              operationId: listProjects
+              required: false
+              schema:
+                type: string
+                format: url
           content:
             application/json:
               schema:
@@ -981,6 +1010,10 @@ components:
           format: email
         role:
           $ref: '#/components/schemas/UserRole'
+    UserDetailsList:
+      type: array
+      items:
+        $ref: '#/components/schemas/UserDetails'
     UserDetails:
       type: object
       properties:
