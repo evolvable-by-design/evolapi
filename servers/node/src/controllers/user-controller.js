@@ -11,6 +11,14 @@ function userController(userService) {
 
   var router = express.Router()
 
+  router.get('/users', AuthService.withAuth((_, res) => {
+    Errors.handleErrorsGlobally(() => {
+      const allUsers = userService.all()
+      const representation = allUsers.map(userWithHypermediaControls);
+      res.status(200).json(representation);
+    }, res);
+  }));
+
   router.post('/users', AuthService.withAuth((req, res, user) => {
     if(utils.isAnyEmpty([req.body.username, req.body.password, req.body.email])) {
       res.status(400).send(new Errors.HttpError(400));
@@ -18,11 +26,7 @@ function userController(userService) {
       Errors.handleErrorsGlobally(() => {
         const createdUser = userService.create(req.body, user);
         
-        const representation = HypermediaRepresentationBuilder
-          .of(createdUser)
-          .representation((u) => u.withoutPasswordRepresentation(ReverseRouter))
-          .link(HypermediaControls.confirmEmail)
-          .build();
+        const representation = userWithHypermediaControls(createdUser)
 
         res.status(201).location(ReverseRouter.forUser(createdUser.id)).json(representation);
       }, res);
@@ -105,6 +109,14 @@ function userController(userService) {
   }));
 
   return router;
+}
+
+function userWithHypermediaControls (user) {
+  return HypermediaRepresentationBuilder
+    .of(user)
+    .representation(u => u.withoutPasswordRepresentation(ReverseRouter))
+    .link(HypermediaControls.confirmEmail)
+    .build();
 }
 
 module.exports = userController;
