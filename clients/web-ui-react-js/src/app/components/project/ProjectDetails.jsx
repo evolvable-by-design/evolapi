@@ -11,7 +11,6 @@ import StarProjectDialog from './StarProjectDialog'
 import TaskCard from '../task/TaskCard'
 import TaskCreationDialog from '../task/TaskCreationDialog'
 import TaskFocus from '../task/TaskFocus'
-import UnarchiveProjectDialog from './UnarchiveProjectDialog'
 
 import { useAppContextState } from '../../context/AppContext'
 import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
@@ -48,8 +47,8 @@ const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => 
     
     <Tasks projectId={projectId} />
     
-    { operationFocus === 'Archive' ? <ArchiveProjectDialog projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
-      : operationFocus === 'Unarchive' ? <UnarchiveProjectDialog projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
+    { operationFocus === 'Archive' ? <ArchiveProjectDialog isArchived={isArchived}  projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
+      : operationFocus === 'Unarchive' ? <ArchiveProjectDialog isArchived={isArchived} projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Add Collaborator' ? <AddCollaboratorDialog projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Delete' ? <DeleteProjectDialog projectId={projectId} onSuccessCallback={() => history.push('/')} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Create user story' ? <TaskCreationDialog projectId={projectId} type={TaskTypes.UserStory} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />

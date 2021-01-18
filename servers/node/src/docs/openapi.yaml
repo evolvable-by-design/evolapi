@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 8.0.1
+  version: 9.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -326,6 +326,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             delete:
               operationId: deleteTask
               parameters:
@@ -398,6 +402,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             delete:
               operationId: deleteTask
               parameters:
@@ -415,6 +423,72 @@ paths:
                 projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
+              parameters:
+                resourceId: '$response.body#/id'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      security: 
+        - bearerToken: []
+  /task/{taskId}/archive:
+    post:
+      description: Reverse the archived status of a task
+      operationId: reverseTaskArchivedState
+      tags:
+        - tasks
+      parameters: 
+        - name: taskId
+          in: path
+          description: Id of the task to archive
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isArchived:
+                    type: boolean
+                required: [ isArchived ]
+          links:
+            update:
+              operationId: updateTask
+              parameters:
+                taskId: '$response.body#/id'
+                id: '$response.body#/id'
+                title: '$response.body#/title'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
+                points: '$response.body#/points'
+                status: '$response.body#/details/status'
+                tags: '$response.body#/details/tags'
+                priority: '$response.body#/details/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
+            delete:
+              operationId: deleteTask
+              parameters:
+                taskId: '$response.body#/id'
+            moveToQA:
+              operationId: toQATask
+              parameters:
+                taskId: '$response.body#/id'
+            complete:
+              operationId: completeTask
+              parameters:
+                taskId: '$response.body#/id'
+            analytics:
+              operationId: getAnalytics
+              x-@relation: vnd_jeera:rel/analytics
               parameters:
                 resourceId: '$response.body#/id'
         default:
@@ -468,37 +542,25 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  # to merge with unarchive
   /project/{projectId}/archive:
-    put:
+    post:
       description: Archive a project
-      operationId: archiveProject
+      operationId: switchProjectArchiveState
       tags:
         - projects
       parameters: 
         - $ref: '#/components/parameters/projectId'
       responses:
-        '204':
+        '200':
           description: Success
-        default:
-          description: unexpected error
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-      security: 
-        - bearerToken: []
-  /project/{projectId}/unarchive:
-    put:
-      description: Unarchive a project
-      operationId: unarchiveProject
-      tags:
-        - projects
-      parameters:
-        - $ref: '#/components/parameters/projectId'
-      responses:
-        '204':
-          description: Success
+                type: object
+                properties:
+                  isArchived:
+                    type: boolean
+                  required: [ isArchived ]
         default:
           description: unexpected error
           content:
@@ -612,6 +674,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             delete:
               operationId: deleteTask
               parameters:
@@ -678,6 +744,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             delete:
               operationId: deleteTask
               parameters:
@@ -728,6 +798,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             complete:
               operationId: toDoneTask
               parameters:
@@ -765,6 +839,10 @@ paths:
                 status: '$response.body#/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
+            reverseArchivedState:
+              operationId: reverseTaskArchivedState
+              parameters:
+                taskId: '$response.body#/id'
             moveToQA:
               operationId: toQATask
               parameters:
@@ -783,6 +861,8 @@ paths:
     get:
       description: Get analytics on a resource
       operationId: getAnalytics
+      security: 
+        - bearerToken: []
       tags:
         - analytics
       responses:
@@ -830,12 +910,8 @@ components:
           operationId: listTasks
           parameters:
             queryProjectId: '$response.body#/id'
-        archive:
-          operationId: archiveProject
-          parameters:
-            projectId: '$response.body#/id'
-        unarchive:
-          operationId: unarchiveProject
+        reverseArchivedState:
+          operationId: switchProjectArchiveState
           parameters:
             projectId: '$response.body#/id'
         delete:
@@ -1052,8 +1128,10 @@ components:
           items:
             type: string
         priority:
-          $ref: '#/components/schemas/Priority'        
-      required: [ id, title, parentProjectId, description, assignee, status ]
+          $ref: '#/components/schemas/Priority'
+        isArchived:
+          type: boolean       
+      required: [ id, title, parentProjectId, description, assignee, status, isArchived ]
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1133,9 +1211,9 @@ components:
             type: string
         priority:
           $ref: '#/components/schemas/Priority'
-        updatesCount:
-          type: integer
-      required: [ id, title, points, parentProjectId, description, assignee, lastUpdate, status, updatesCount ]
+        isArchived:
+          type: boolean
+      required: [ id, title, points, parentProjectId, description, assignee, status, isArchived ]
     Task:
       oneOf:
         - $ref: '#/components/schemas/TechnicalStory'
