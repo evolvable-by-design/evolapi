@@ -20,10 +20,14 @@ import { TaskTypes } from '../../domain/Task'
 const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => {
   useUserDetailsFetcher()
   
-  const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Delete', 'Create technical story', 'Create user story', 'Star' ]
+  const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Create technical story', 'Create user story' ]
   const [ operationFocus, setOperationFocus ] = useState()
   const history = useHistory()
   const { userProfile } = useAppContextState()
+
+  if (userProfile?.role === 'ProductOwner') {
+    operations.push('Delete')
+  }
 
   const isStarred = useMemo(() => {
     if (userProfile === undefined) return false

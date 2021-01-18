@@ -9,13 +9,14 @@ const Responses = require('../utils/responses');
 const AuthService = require('../services/auth-service');
 const ReverseRouter = require('../reverse-router');
 const { TechnicalIdsExtractor } = require('../utils/router-utils');
+const { UserRoles } = require('../models/User');
 
-function taskWithHypermediaControls(task) {
+function taskWithHypermediaControls(task, user) {
   return HypermediaRepresentationBuilder
     .of(task)
     .representation(t => t.taskRepresentation(ReverseRouter))
     .link(HypermediaControls.update(task))
-    .link(HypermediaControls.delete(task))
+    .link(HypermediaControls.delete(task), user.role === UserRoles.PO)
     .link(HypermediaControls.moveToQa(task), task.status !== TaskStatus.qa)
     .link(HypermediaControls.complete(task), task.status === TaskStatus.qa)
     .link(HypermediaControls.analytics(task))
@@ -53,7 +54,7 @@ const taskController = function(projectService, taskService) {
 
       const representation = HypermediaRepresentationBuilder
         .of(tasks)
-        .representation((t) => t.map(taskWithHypermediaControls))
+        .representation((t) => t.map(task => taskWithHypermediaControls(task, user)))
         .representation((t) => ({ tasks: t }))
         .link(HypermediaControls.create(queryProjectId))
         .build();
@@ -73,7 +74,7 @@ const taskController = function(projectService, taskService) {
           Responses.badRequest(res);
         } else {
           const createdTask = createFunction(cleanedBodyValues);
-          Responses.created(res, taskWithHypermediaControls(createdTask));
+          Responses.created(res, taskWithHypermediaControls(createdTask, user));
         }
       }, res);
     })(req, res);
@@ -83,13 +84,13 @@ const taskController = function(projectService, taskService) {
 
   router.post('/tasks/userStory', createTask(taskService.createUserStory.bind(taskService)));
 
-  router.get('/task/:taskId', AuthService.withAuth((req, res) => {
+  router.get('/task/:taskId', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
       const taskId = req.params.taskId;
       const task = taskService.findById(taskId);
 
       if (task) {
-        Responses.ok(res, taskWithHypermediaControls(task));
+        Responses.ok(res, taskWithHypermediaControls(task, user));
       } else {
         Responses.notFound(res);
       }
@@ -118,7 +119,7 @@ const taskController = function(projectService, taskService) {
       const taskId = req.params.taskId;
 
       try {
-        taskService.delete(taskId);
+        taskService.delete(taskId, user);
         Responses.noContent(res);
       } catch (error) {
         if (error instanceof Errors.BusinessRuleEnforced) {

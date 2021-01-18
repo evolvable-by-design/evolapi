@@ -8,8 +8,9 @@ const Responses = require('../utils/responses');
 const ReverseRouter = require('../reverse-router');
 const { TechnicalIdsExtractor } = require('../utils/router-utils');
 const AuthService = require('../services/auth-service');
+const { UserRoles } = require('../models/User')
 
-function projectWithHypermediaControls(project) {
+function projectWithHypermediaControls(project, user) {
   return HypermediaRepresentationBuilder
     .of(project)
     .representation(_ => project.representation(ReverseRouter))
@@ -17,7 +18,7 @@ function projectWithHypermediaControls(project) {
     .link(HypermediaControls.createTask(project), !project.isArchived)
     .link(HypermediaControls.listTasks(project))
     .link(HypermediaControls.reverseArchivedState(project))
-    .link(HypermediaControls.delete(project), project.isArchived)
+    .link(HypermediaControls.delete(project), project.isArchived && user.role === UserRoles.PO)
     .link(HypermediaControls.star(project))
     .link(HypermediaControls.analytics(project))
     .build();
@@ -34,7 +35,7 @@ function projectController(projectService, userService) {
       
       const representation = HypermediaRepresentationBuilder
         .of(projects)
-        .representation((p) => p.map(projectWithHypermediaControls))
+        .representation((p) => p.map(project => projectWithHypermediaControls(project, user)))
         .representation((p) => { return { projects: p };})
         .link(HypermediaControls.createProject)
         .build();
@@ -58,7 +59,7 @@ function projectController(projectService, userService) {
         const newProject = projectService.create(req.body.name, user.id);
         res.status(201)
           .location(ReverseRouter.forProject(newProject.id))
-          .json(projectWithHypermediaControls(newProject));
+          .json(projectWithHypermediaControls(newProject, user));
       }
     }, res);
   }));
@@ -66,13 +67,13 @@ function projectController(projectService, userService) {
   router.get('/project/:id', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
       const project = projectService.findById(req.params.id, user.id);
-      Responses.ok(res, projectWithHypermediaControls(project));
+      Responses.ok(res, projectWithHypermediaControls(project, user));
     }, res)
   }));
 
   router.delete('/project/:id', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      projectService.delete(req.params.id, user.id);
+      projectService.delete(req.params.id, user);
       Responses.noContent(res);
     }, res)
   }));
