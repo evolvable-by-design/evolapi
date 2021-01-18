@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Dialog, Pane, TextInput, Switch, majorScale } from 'evergreen-ui' 
+import { Alert, Dialog, Pane, TextInput } from 'evergreen-ui' 
 
 import useFetch from '../../hooks/useFetch'
 import ProjectService from '../../services/ProjectService'

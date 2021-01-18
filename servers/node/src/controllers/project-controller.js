@@ -16,8 +16,7 @@ function projectWithHypermediaControls(project) {
     .link(HypermediaControls.inviteUser(project))
     .link(HypermediaControls.createTask(project), !project.isArchived)
     .link(HypermediaControls.listTasks(project))
-    .link(HypermediaControls.archive(project), !project.isArchived)
-    .link(HypermediaControls.unarchive(project), project.isArchived)
+    .link(HypermediaControls.reverseArchivedState(project))
     .link(HypermediaControls.delete(project), project.isArchived)
     .link(HypermediaControls.star(project))
     .link(HypermediaControls.analytics(project))
@@ -89,17 +88,10 @@ function projectController(projectService, userService) {
     }, res)
   }));
 
-  router.put('/project/:id/archive', AuthService.withAuth((req, res, user) => {
+  router.post('/project/:id/archive', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      projectService.archive(req.params.id, user.id);
-      Responses.noContent(res);
-    }, res)
-  }));
-
-  router.put('/project/:id/unarchive', AuthService.withAuth((req, res, user) => {
-    Errors.handleErrorsGlobally(() => {
-      projectService.unarchive(req.params.id, user.id);
-      Responses.noContent(res);
+      const newArchivedState = projectService.archive(req.params.id, user.id);
+      Responses.ok(res, { isArchived: newArchivedState });
     }, res)
   }));
 

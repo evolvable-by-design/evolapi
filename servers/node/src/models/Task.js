@@ -32,9 +32,9 @@ class Task {
       description: this.description || '',
       assignee: this.assignee,
       status: this.status,
-      // isArchived: this.isArchived,
       tags: this.tags,
-      priority: this.priority
+      priority: this.priority,
+      isArchived: this.isArchived
     };
 
     if (this.isUserStory()) {

@@ -19,6 +19,7 @@ module.exports = {
   complete: (task) => Link('complete', { taskId: task.id }),
   create: (projectId) => Link('create', { parentProjectId: ReverseRouter.forProject(projectId) }),
   beforeDeletion: () => Link('before', {}),
-  analytics: (task) => Link('analytics', { resourceId: task.id })
+  analytics: (task) => Link('analytics', { resourceId: task.id }),
+  reverseArchivedState: (task) => Link('reverseArchivedState', { taskId: task.id })
 
 }
