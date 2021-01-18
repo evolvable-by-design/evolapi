@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 7.0.0
+  version: 7.1.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -551,18 +551,11 @@ paths:
         '200':
           description: Success - list of tasks
           headers:
-            X-Next:
-              description: Link to next page
-              required: false
+            Link:
+              description: 'Contextually relevant links - provided links all have a rel attribute as recommended here: https://www.w3.org/wiki/LinkHeader'
               schema:
                 type: string
-                format: url
-            X-Last:
-              description: Link to last page
-              required: false
-              schema:
-                type: string
-                format: url
+                format: link-http-header
           content:
             application/json:
               schema:
@@ -924,7 +917,6 @@ components:
           type: string
         id:
           type: string
-          format: uuid
         email:
           type: string
           format: email
@@ -981,7 +973,6 @@ components:
           type: string
         id:
           type: string
-          format: uuid
         isPublic:
           type: boolean
         isArchived:
@@ -1015,7 +1006,6 @@ components:
           maxLength: 4000
         assignee:
           type: string
-          format: uuid
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
@@ -1039,7 +1029,6 @@ components:
           maxLength: 4000
         assignee:
           type: string
-          format: uuid
         status:
           $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
@@ -1054,12 +1043,10 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         title:
           type: string
         parentProjectId:
           type: string
-          format: uuid
         description:
           type: string
         assignee:
@@ -1090,7 +1077,6 @@ components:
           maxLength: 4000
         assignee:
           type: string
-          format: uuid
         points:
           type: number
           minimum: 0
@@ -1118,7 +1104,6 @@ components:
           maxLength: 4000
         assignee:
           type: string
-          format: uuid
         points:
           type: number
           minimum: 0
@@ -1137,25 +1122,16 @@ components:
       properties:
         id:
           type: string
-          format: uuid
         title:
           type: string
         points:
           type: number
         parentProjectId:
           type: string
-          format: uuid
         description:
           type: string
         assignee:
           type: string
-          format: uuid
-        creationDate:
-          type: string
-          format: date
-        lastUpdate:
-          type: string
-          format: date
         status:
           $ref: '#/components/schemas/TaskStatus'
         tags:
@@ -1224,7 +1200,6 @@ components:
           items:
             oneOf:
               - type: string
-                format: uuid
               - type: string
                 format: email
           minItems: 1

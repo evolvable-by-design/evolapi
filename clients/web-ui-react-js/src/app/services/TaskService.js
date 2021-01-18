@@ -1,5 +1,6 @@
 import HttpClient from '../services/HttpClient'
 import { TaskTypes } from '../domain/Task'
+import { parseLinkHeader } from '../utils/HttpUtils'
 
 class TaskService {
 
@@ -20,8 +21,11 @@ class TaskService {
 
   static async _fetchAndFormatTaskListResult(url) {
     const response = await HttpClient().get(url)
-    const nextPage = response.headers['x-next']
-    const lastPage = response.headers['x-last']
+
+    const links = parseLinkHeader(response.headers['link'])
+
+    const nextPage = links.findBy('rel', 'hydra:next')?.value
+    const lastPage = links.findBy('rel', 'hydra:last')?.value
     return {
       tasks: response.data.tasks,
       nextPage,
