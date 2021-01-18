@@ -22,7 +22,7 @@ const LogoutDialog = () => {
   if (isLoading) {
     return <Loading />
   } else if (error) {
-    return <FullscreenError error={error}/>
+    return <FullscreenError error={error?.response?.data?.description || error}/>
   } else if (success) {
     setTimeout(() => history.push('/'), 1000);
     return <Success data={data}/>
