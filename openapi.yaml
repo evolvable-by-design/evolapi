@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 9.2.0
+  version: 10.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -347,10 +347,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -423,10 +423,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -695,10 +695,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -765,10 +765,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -819,10 +819,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -860,10 +860,10 @@ paths:
                 parentProjectId: '$response.body#/parentProjectId'
                 id: '$response.body#/id'
                 title: '$response.body#/title'
-                description: '$response.body#/description'
-                assignee: '$response.body#/assignee'
+                description: '$response.body#/details/description'
+                assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/status'
+                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -1147,13 +1147,8 @@ components:
           type: string
         parentProjectId:
           type: string
-        description:
-          type: string
-        assignee:
-          type: string
-          format: uuid
-        status:
-          $ref: '#/components/schemas/TaskStatus'
+        details:
+          $ref: '#/components/schemas/TaskDetails'
         tags:
           type: array
           items:
@@ -1162,7 +1157,16 @@ components:
           $ref: '#/components/schemas/Priority'
         isArchived:
           type: boolean       
-      required: [ id, title, parentProjectId, description, assignee, status, isArchived ]
+      required: [ id, title, parentProjectId, details, isArchived ]
+    TaskDetails:
+      type: object
+      properties:
+        description:
+          type: string
+        assignee:
+          type: string
+        status:
+          $ref: '#/components/schemas/TaskStatus'
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1230,12 +1234,8 @@ components:
           type: number
         parentProjectId:
           type: string
-        description:
-          type: string
-        assignee:
-          type: string
-        status:
-          $ref: '#/components/schemas/TaskStatus'
+        details:
+          $ref: '#/components/schemas/TaskDetails'
         tags:
           type: array
           items:
@@ -1244,7 +1244,7 @@ components:
           $ref: '#/components/schemas/Priority'
         isArchived:
           type: boolean
-      required: [ id, title, points, parentProjectId, description, assignee, status, isArchived ]
+      required: [ id, title, points, parentProjectId, details, isArchived ]
     Task:
       oneOf:
         - $ref: '#/components/schemas/TechnicalStory'
