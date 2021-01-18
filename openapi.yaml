@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 7.1.0
+  version: 7.2.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -1190,7 +1190,9 @@ components:
     Error:
       type: object
       properties:
-        errorCode:
+        code:
+          type: string
+        description:
           type: string
     InviteUsersToProjectRequest:
       type: object
