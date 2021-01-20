@@ -13,7 +13,7 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
   const [ assignee, setAssignee ] = useState()
   const [ points, setPoints ] = useState()
   const [ status, setStatus ] = useState()
-  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.create(projectId, type, {name, description, assignee, points}))
+  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.create(projectId, type, {name, description, status, assignee, points}))
 
   useEffect(() => {
     if (success && data) { 

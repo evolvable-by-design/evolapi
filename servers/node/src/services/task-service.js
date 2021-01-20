@@ -7,8 +7,6 @@ class TaskService {
 
   constructor() {
     this.tasks = [];
-
-    this.createUserStory({ name: 'First task', assignee: 'f19869bc-a117-4c19-bc12-d907de312632', status: 'todo', points: 1 }, '0e4a7fdb-b97e-42bf-a657-a61d88efb737');
   }
 
   list(projectId, createdAfter, offset, limit) {
