@@ -245,14 +245,12 @@ paths:
           headers:
             X-Next:
               description: Link to next page
-              operationId: listProjects
               required: false
               schema:
                 type: string
                 format: url
             X-Last:
               description: Link to last page
-              operationId: listProjects
               required: false
               schema:
                 type: string
@@ -588,7 +586,7 @@ paths:
                 properties:
                   isArchived:
                     type: boolean
-                  required: [ isArchived ]
+                required: [ isArchived ]
         default:
           description: unexpected error
           content:
