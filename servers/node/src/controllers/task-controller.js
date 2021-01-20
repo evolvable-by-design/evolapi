@@ -28,19 +28,20 @@ const taskController = function(projectService, taskService) {
 
   router.get('/tasks', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const queryProjectId = req.params.queryProjectId;
+      const queryProjectId = req.query.queryProjectId;
       const createdBefore = req.query.createdBefore;
       const offset = Number(req.query.offset) || 0;
       const limit = Number(req.query.limit) || 3;
   
-      const projectId = projectService.existsWithId(queryProjectId, user.id) ? queryProjectId : undefined
-      const tasks = taskService.list(projectId, createdBefore ? new Date(createdBefore) : undefined, offset, limit);
+      const tasks = projectService.existsWithId(queryProjectId, user.id)
+        ? taskService.list(queryProjectId, createdBefore ? new Date(createdBefore) : undefined, offset, limit)
+        : []
 
       var basePageUrl = `/tasks?`;
       if (createdBefore) { basePageUrl += `createdBefore=${createdBefore}&`; }
-      if (projectId) { basePageUrl += `queryProjectId=${projectId}&`;}
+      if (queryProjectId) { basePageUrl += `queryProjectId=${queryProjectId}&`;}
 
-      const amountOfTasks = taskService.tasksCount(projectId, createdBefore);
+      const amountOfTasks = taskService.tasksCount(queryProjectId, createdBefore);
       if (amountOfTasks > offset + limit - 1) {
         res.append('X-Next', basePageUrl + `offset=${offset+limit}&limit=${limit}`);
       }
@@ -51,7 +52,7 @@ const taskController = function(projectService, taskService) {
         .of(tasks)
         .representation((t) => t.map(taskWithHypermediaControls))
         .representation((t) => ({ tasks: t }))
-        .link(HypermediaControls.create(projectId))
+        .link(HypermediaControls.create(queryProjectId))
         .build();
 
       res.status(200).json(representation);

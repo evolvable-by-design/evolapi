@@ -70,7 +70,7 @@ const Priority = {
   critical: 'critical'
 }
 
-const validateBusinessConstraints = (task, title, description, points, status, tags, priority, parentProjectId) => {
+const validateBusinessConstraints = (task, title, description, points, status, tags, priority) => {
   if (title && (title.length < 4 || title.length > 80)) {
     return false;
   } else if (description && description.length > 4000) {
@@ -80,6 +80,8 @@ const validateBusinessConstraints = (task, title, description, points, status, t
   }else if (tags && tags.length > 10) {
     return false;
   } else if (points && (points < 0 || points > 120)) {
+    return false;
+  } else if (priority && !Object.values(Priority).includes(priority)) {
     return false;
   } else {
     return true;
