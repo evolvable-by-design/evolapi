@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 10.0.1
+  version: 10.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -381,7 +381,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     delete:
-      summary: Delete a task (only if archived and the user is an admin)
+      summary: Delete a task
       operationId: deleteTask
       tags:
         - tasks

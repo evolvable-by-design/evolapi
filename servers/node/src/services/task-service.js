@@ -45,7 +45,7 @@ class TaskService {
     }
     
     const task = this.findByIdOrFail(taskId);
-    if (task && task.isArchived) {
+    if (task) {
       this.taskRepository.delete(task)
       this.analyticService.update(task.id)
     } else {

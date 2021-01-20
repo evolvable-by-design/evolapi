@@ -69,7 +69,6 @@ function taskActions(task, onOperationInvokationSuccess, history, userProfile) {
     delete actions['Archive']
   } else {
     delete actions['Unarchive']
-    delete actions['Delete']
   }
 
   return actions
