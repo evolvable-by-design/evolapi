@@ -67,7 +67,9 @@ class TaskService {
     return createdTask;
   }
 
-  updateTask(taskId, { title, description, assignee, status, points, tags, priority }) {
+  updateTask(taskId, { title, details, points, tags, priority }) {
+    const { description, assignee, status } = details
+
     const task = this.findByIdOrFail(taskId);
     if (title) { task.title = title; }
     if (description) { task.description = description; }

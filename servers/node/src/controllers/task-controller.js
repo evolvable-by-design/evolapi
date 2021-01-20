@@ -97,15 +97,21 @@ const taskController = function(projectService, taskService) {
     }, res);
   }));
 
-  router.put('/task/:taskId', AuthService.withAuth((req, res, user) => {
+  router.put('/task/', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const taskId = req.params.taskId;
+      const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body)
+      const { id: taskId, title, details, points, tags, priority} = cleanedBodyValues;
+      const { description, status } = details
 
-      const { title, description, status, points, tags, priority} = req.body;
       const task = taskService.findById(taskId)
+
       if (!task) {
         Responses.notFound(res);
-      } else if (!validateBusinessConstraints(task, title, description, points, status, tags, priority)) {
+      }
+
+      projectService.findById(task.projectId, user.id)
+      
+      if (!validateBusinessConstraints(task, title, description, points, status, tags, priority)) {
         Responses.badRequest(res);
       } else {
         taskService.updateTask(taskId, replaceRelationUrlsWithTechnicalIds(req.body));
@@ -170,6 +176,10 @@ function replaceRelationUrlsWithTechnicalIds(object) {
   if (toReturn['assignee']) {
     const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn['assignee'])
     toReturn['assignee'] = ids ? ids.userId : undefined
+  }
+  if (toReturn['details'] && toReturn.details['assignee']) {
+    const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn.details['assignee'])
+    toReturn.details['assignee'] = ids ? ids.userId : undefined
   }
 
   if (toReturn['parentProjectId']) {

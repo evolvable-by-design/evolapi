@@ -54,7 +54,7 @@ class TaskService {
   }
 
   static async update(task) {
-    return HttpClient().put(`/task/${task.id}`, task)
+    return HttpClient().put(`/task`, task)
   }
 
   static async toQa(taskId) {
