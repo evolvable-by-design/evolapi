@@ -3,8 +3,9 @@ const express = require('express');
 const Errors = require('../utils/errors');
 const Responses = require('../utils/responses');
 const AuthService = require('../services/auth-service');
+const ReverseRouter = require('../reverse-router');
 
-const analyticController = function(analyticService) {
+const analyticController = function(analyticService, projectService, taskService) {
 
   const router = express.Router();
 

@@ -42,6 +42,7 @@ const taskController = function(projectService, taskService) {
       if (queryProjectId) { basePageUrl += `queryProjectId=${queryProjectId}&`;}
 
       const amountOfTasks = taskService.tasksCount(queryProjectId, createdBefore);
+      let linkHeaderValue = '';
       if (amountOfTasks > offset + limit - 1) {
         linkHeaderValue += `<${basePageUrl}offset=${offset+limit}&limit=${limit}>; rel=hydra:next,`
       }
