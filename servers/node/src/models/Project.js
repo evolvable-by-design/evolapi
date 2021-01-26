@@ -49,7 +49,7 @@ class Project {
       taskStatusTransitions: this.taskStatusTransitions,
       nextCreationStep: this.nextCreationStep !== null
         ? PROJECT_CREATION_STEPS_LABEL[this.nextCreationStep]
-        : PROJECT_CREATION_STEPS_LABEL[3] // CREATION_COMPLETED
+        : null
     }
   }
 

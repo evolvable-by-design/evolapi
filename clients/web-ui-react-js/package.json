@@ -1,6 +1,6 @@
 {
   "name": "evaluation-client",
-  "version": "14.0.0",
+  "version": "15.0.0",
   "private": true,
   "dependencies": {
     "ajv": "6.10.2",

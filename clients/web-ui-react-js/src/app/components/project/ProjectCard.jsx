@@ -19,7 +19,7 @@ const ProjectCard = ({id, title, collaborators, nextCreationStep, continueProjec
 const StatelessProjectCard = ({id, title, lastUpdate, collaborators, nextCreationStep, continueProjectCreation}) =>
   <Card display="flex" flexDirection="column" elevation={1} hoverElevation={3} width={majorScale(40)} padding={majorScale(2)} marginRight={majorScale(3)} marginBottom={majorScale(3)} minHeight="100px" >
     <Pane display="flex" flexDirection="row" marginBottom={majorScale(2)}>
-      { nextCreationStep === 'CREATION_COMPLETED'
+      { nextCreationStep === null
         ? <Link to={`/project/${id}`} style={{flexGrow: 10}}><Heading>{title}</Heading></Link>
         : <Link to='#' style={{flexGrow: 10}}><Heading onClick={continueProjectCreation}>{title}</Heading></Link>
       }
