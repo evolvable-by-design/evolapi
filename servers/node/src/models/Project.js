@@ -24,13 +24,13 @@ class Project {
 
   continueCreation(options) {
     if (this.nextCreationStep === 1) {
-      this.availableTaskStatuses = options.taskStatuses
-      this.taskStatusTransitions = options.taskStatusTransitions
+      this.description = options.description
+      options.collaborators.forEach(collaborator => this.collaborators.push(collaborator))
       this.nextCreationStep = 2
       return this
     } else if (this.nextCreationStep === 2) {
-      this.description = options.description
-      options.collaborators.forEach(collaborator => this.collaborators.push(collaborator))
+      this.availableTaskStatuses = options.taskStatuses
+      this.taskStatusTransitions = options.taskStatusTransitions
       this.nextCreationStep = null
       return this
     } else {
@@ -57,8 +57,8 @@ class Project {
 
 const PROJECT_CREATION_STEPS_LABEL = [
   'INITIALIZATION',
-  'TASK_FLOW_SETUP',
   'INFORMATION_SETUP',
+  'TASK_FLOW_SETUP',
   'CREATION_COMPLETED'
 ]
 

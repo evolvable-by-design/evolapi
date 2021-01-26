@@ -66,11 +66,11 @@ class ProjectService {
   }
 
   setTaskStatusFlow(id, username, taskStatuses, taskStatusTransitions) {
-    return this._nextCreationStep(id, username, 1, { taskStatuses, taskStatusTransitions })
+    return this._nextCreationStep(id, username, 2, { taskStatuses, taskStatusTransitions })
   }
 
   setDetails(id, username, description, collaborators) {
-    return this._nextCreationStep(id, username, 2, { description, collaborators })
+    return this._nextCreationStep(id, username, 1, { description, collaborators })
   }
 
   _nextCreationStep(id, username, stepIndex, options) {

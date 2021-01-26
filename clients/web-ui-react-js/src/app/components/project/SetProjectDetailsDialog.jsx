@@ -20,7 +20,7 @@ const SetProjectDetailsDialog = ({ projectId, isShown, onSuccessCallback, onClos
 
   return <Dialog
     isShown={isShown}
-    title='Set the project details (step 3/3)'
+    title='Set the project details (step 2/3)'
     isConfirmLoading={isLoading}
     confirmLabel="Create project"
     onConfirm={() => makeCall()}

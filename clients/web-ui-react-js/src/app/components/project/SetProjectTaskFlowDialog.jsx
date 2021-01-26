@@ -19,7 +19,7 @@ const SetTaskFlowDialog = ({ projectId, isShown, onSuccessCallback, onCloseCompl
 
   return <Dialog
     isShown={isShown}
-    title='Set the available statuses and transitions of the tasks (step 2/3)'
+    title='Set the available statuses and transitions of the tasks (step 3/3)'
     isConfirmLoading={isLoading}
     confirmLabel="Next"
     onConfirm={() => makeCall()}

@@ -14,10 +14,10 @@ const CreateProjectDialogs = ({ project, onSuccessCallback, ...dialogProps }) =>
 
   if (step === 'INITIALIZATION') {
     return <CreateProjectDialog onSuccessCallback={setActualProject} {...dialogProps} />
-  } else if (actualProject && step === 'TASK_FLOW_SETUP') {
-    return <SetProjectTaskFlowDialog projectId={actualProject.id} onSuccessCallback={setActualProject} {...dialogProps}/>
   } else if (actualProject && step === 'INFORMATION_SETUP') {
     return <SetProjectDetailsDialog  projectId={actualProject.id} onSuccessCallback={setActualProject} {...dialogProps}/>
+  } else if (actualProject && step === 'TASK_FLOW_SETUP') {
+    return <SetProjectTaskFlowDialog projectId={actualProject.id} onSuccessCallback={setActualProject} {...dialogProps}/>
   } else if (actualProject && step === 'CREATION_COMPLETED') {
     onSuccessCallback(actualProject)
     return null
