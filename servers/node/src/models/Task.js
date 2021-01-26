@@ -77,9 +77,7 @@ const validateBusinessConstraints = (task, title, description, points, status, t
     return false;
   } else if (description && description.length > 4000) {
     return false;
-  } else if (status && (!task || status !== task.status) && !Object.values(TaskStatusFreeToMove).includes(status)) {
-    return false; 
-  }else if (tags && tags.length > 10) {
+  } else if (tags && tags.length > 10) {
     return false;
   } else if (points && (points < 0 || points > 120)) {
     return false;

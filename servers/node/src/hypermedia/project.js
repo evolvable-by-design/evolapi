@@ -13,6 +13,7 @@ module.exports = {
   reverseArchivedState: (project) => Link('reverseArchivedState', { projectId: project.id }),
   delete: (project) => Link('delete', { projectId: project.id }),
   star: (project) => Link('star', { projectId: project.id }),
-  analytics: (project) => Link('analytics', { resourceId: project.id })
-
+  analytics: (project) => Link('analytics', { resourceId: project.id }),
+  setTaskStatusesFlow: (project) => Link('setTaskStatusesFlow', { projectId: project.id }),
+  setDetails: (project) => Link('setDetails', { projectId: project.id })
 };

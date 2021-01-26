@@ -22,7 +22,7 @@ const Project = () => {
       isLoading ? <FullscreenLoader />
         : error && error instanceof AuthenticationRequiredError ? <LoginRedirect />
         : error ? <FullScreenError error={error?.response?.data?.description || error.message}/>
-        : success ? <ProjectDetails projectId={id} title={data.name} isArchived={data.isArchived} refreshProjectFct={() => makeCall()} />
+        : success ? <ProjectDetails projectId={id} title={data.name} isArchived={data.isArchived} description={data.description} taskStatuses={data.availableTaskStatuses} refreshProjectFct={() => makeCall()} taskStatusTransitions={data.taskStatusTransitions} />
         : <p>Something unexpected happened. Please try again later.</p>
     }
   </BaseApplicationLayout>

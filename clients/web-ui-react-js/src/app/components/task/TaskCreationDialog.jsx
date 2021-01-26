@@ -67,7 +67,6 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
               <WithLabel label='Description'>
                 <Textarea
                   isInvalid={description && (description.length > 4000)}
-                  validationMessage={description && description.length > 4000 ? 'Max length is 4000' : undefined}
                   value={description || ''}
                   width="100%"
                   onChange={e => setDescription(e.target.value)}
@@ -80,7 +79,6 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
                 <WithLabel label='Points' required>
                 <TextInput
                   isInvalid={points && ((points < 0) || (points > 120))}
-                  validationMessage={points && points < 0 ? 'Can only be a positive number' : points && points > 120 ? 'Must be inferior to 120' : undefined}
                   value={points}
                   type='number'
                   width="100%"
@@ -89,17 +87,6 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
                 </WithLabel>
               </Pane>
             }
-
-            <Pane width="100%" >
-              <WithLabel label='Status'>
-                <SelectInput 
-                  options={Array.from(new Set([ 'todo', 'in progress', 'review' ]))}
-                  value={status}
-                  onChange={e => setStatus(e.target.value)}
-                  required={false}
-                />
-              </WithLabel>
-            </Pane>
 
             <Pane width="100%" >
               <WithLabel label='Tags'>

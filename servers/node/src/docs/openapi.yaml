@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 11.0.0
+  version: 12.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -262,6 +262,10 @@ paths:
           links:
             createProject:
               operationId: createProject
+            setTaskStatusesFlow:
+              operationId: setProjectTaskStatusFlow
+            setDetails:
+              operationId: setProjectDetails
         default:
           description: unexpected error
           content:
@@ -289,6 +293,79 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
+  /project/{projectId}/task-status-flow:
+    parameters: 
+      - $ref: '#/components/parameters/projectId'
+    post:
+      summary: Set the tasks status flow of the project
+      operationId: setProjectTaskStatusFlow
+      tags:
+        - projects
+      security: 
+        - bearerToken: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                taskStatuses:
+                  type: array
+                  minimum: 1
+                  items:
+                    $ref: '#/components/schemas/TaskStatus'
+                taskStatusTransitions:
+                  type: array
+                  minimum: 1
+                  items:
+                    $ref: '#/components/schemas/TaskStatusTransition'
+              required:
+                - taskStatuses
+                - taskStatusTransitions
+
+      responses:
+        '200':
+          $ref: '#/components/responses/projectDetails'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /project/{projectId}/details:
+    parameters: 
+      - $ref: '#/components/parameters/projectId'
+    post:
+      summary: Set the project details
+      operationId: setProjectDetails
+      tags:
+        - projects
+      security: 
+        - bearerToken: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                collaborators:
+                  type: array
+                  items:
+                    type: string
+                    description: The name of the users to add as collaborators of the project
+              required:
+                - description
+      responses:
+        '200':
+          $ref: '#/components/responses/projectDetails'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /project/{projectId}:
     parameters: 
         - $ref: '#/components/parameters/projectId'
@@ -350,7 +427,6 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -361,15 +437,10 @@ paths:
               operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-            moveToQA:
-              operationId: toQATask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
-            complete:
-              operationId: toDoneTask
-              parameters:
-                taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -427,7 +498,6 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -439,16 +509,10 @@ paths:
               parameters:
                 taskId: '$response.body#/id'
                 projectId: '$response.body#/parentProjectId'
-            moveToQA:
-              operationId: toQATask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
-            complete:
-              operationId: toDoneTask
-              parameters:
-                taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -495,7 +559,6 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/details/tags'
                 priority: '$response.body#/details/priority'
             reverseArchivedState:
@@ -506,12 +569,8 @@ paths:
               operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-            moveToQA:
-              operationId: toQATask
-              parameters:
-                taskId: '$response.body#/id'
-            complete:
-              operationId: completeTask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
             analytics:
@@ -700,7 +759,6 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -711,15 +769,10 @@ paths:
               operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-            moveToQA:
-              operationId: toQATask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
-            complete:
-              operationId: toDoneTask
-              parameters:
-                taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -770,7 +823,6 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
@@ -781,15 +833,10 @@ paths:
               operationId: deleteTask
               parameters:
                 taskId: '$response.body#/id'
-            moveToQA:
-              operationId: toQATask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
-            complete:
-              operationId: toDoneTask
-              parameters:
-                taskId: '$response.body#/id'
-                projectId: '$response.body#/parentProjectId'
             analytics:
               operationId: getAnalytics
               parameters:
@@ -802,14 +849,22 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /task/{taskId}/toQa:
+  /task/{taskId}/status:
     parameters:
       - $ref: '#/components/parameters/taskId'
     put:
-      description: Place the task in QA status
-      operationId: toQATask
+      description: Update the task's status
+      operationId: updateTaskStatus
       tags:
         - tasks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
       responses:
         '204':
           description: Success
@@ -824,56 +879,14 @@ paths:
                 description: '$response.body#/details/description'
                 assignee: '$response.body#/details/assignee'
                 points: '$response.body#/points'
-                status: '$response.body#/details/status'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
             reverseArchivedState:
               operationId: reverseTaskArchivedState
               parameters:
                 taskId: '$response.body#/id'
-            complete:
-              operationId: toDoneTask
-              parameters:
-                taskId: '$response.body#/id'
-        default:
-          description: unexpected error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-      security: 
-        - bearerToken: []
-  /task/{taskId}/complete:
-    parameters:
-      - $ref: '#/components/parameters/taskId'
-    put:
-      description: Place the task in done status
-      operationId: toDoneTask
-      tags:
-        - tasks
-      responses:
-        '204':
-          description: Success
-          links:
-            modify:
-              operationId: updateTask
-              parameters:
-                taskId: '$response.body#/id'
-                parentProjectId: '$response.body#/parentProjectId'
-                id: '$response.body#/id'
-                title: '$response.body#/title'
-                description: '$response.body#/details/description'
-                assignee: '$response.body#/details/assignee'
-                points: '$response.body#/points'
-                status: '$response.body#/details/status'
-                tags: '$response.body#/tags'
-                priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
-              parameters:
-                taskId: '$response.body#/id'
-            moveToQA:
-              operationId: toQATask
+            updateStatus:
+              operationId: updateTaskStatus
               parameters:
                 taskId: '$response.body#/id'
         default:
@@ -955,6 +968,14 @@ components:
           operationId: getAnalytics
           parameters:
             resourceId: '$response.body#/id'
+        setTaskStatusesFlow:
+          operationId: setProjectTaskStatusFlow
+          parameters:
+            projectId: '$response.body#/id'
+        setDetails:
+          operationId: setProjectDetails
+          parameters:
+            projectId: '$response.body#/id'
   parameters:
     userId: 
       name: userId
@@ -1083,7 +1104,24 @@ components:
           type: array
           items:
             type: string
-            format: uuid
+            description: username
+        description:
+          type: string
+        availableTaskStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+        taskStatusTransitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatusTransition'
+        nextCreationStep:
+          type: string
+          enum: 
+            - INITIALIZATION
+            - TASK_FLOW_SETUP
+            - INFORMATION_SETUP
+            - CREATION_COMPLETED
       required: [ name, id, isArchived, collaborators ]
     TasksList:
       type: object
@@ -1108,8 +1146,6 @@ components:
           maxLength: 4000
         assignee:
           type: string
-        status:
-          $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
           type: array
           items:
@@ -1164,7 +1200,7 @@ components:
         assignee:
           type: string
         status:
-          $ref: '#/components/schemas/TaskStatus'
+          type: string
     TaskDetailsUpdate:
       type: object
       properties:
@@ -1172,8 +1208,6 @@ components:
           type: string
         assignee:
           type: string
-        status:
-          $ref: '#/components/schemas/TaskStatusFreeToMove'
     UserStoryCreationRequest:
       type: object
       properties:
@@ -1194,8 +1228,6 @@ components:
           type: number
           minimum: 0
           maximum: 120
-        status:
-          $ref: '#/components/schemas/TaskStatusFreeToMove'
         tags:
           type: array
           items:
@@ -1253,11 +1285,21 @@ components:
         - $ref: '#/components/schemas/TechnicalStory'
         - $ref: '#/components/schemas/UserStory'
     TaskStatus:
-      type: string
-      enum: [ 'todo', 'in progress', 'review', 'QA', 'done' ]
-    TaskStatusFreeToMove:
-      type: string
-      enum: [ 'todo', 'in progress', 'review' ]
+      type: object
+      properties:
+        id:
+          type: string
+        label:
+          type: string
+    TaskStatusTransition:
+      type: object
+      properties:
+        from:
+          type: string
+          description: Either a comma-delimited string of TaskStatus ids or '*' to select them all
+        to:
+          type: string
+          description: Either a comma-delimited string of TaskStatus ids or '*' to select them all
     Priority:
       type: string
       enum:
@@ -1305,10 +1347,8 @@ components:
         users:
           type: array
           items:
-            oneOf:
-              - type: string
-              - type: string
-                format: email
+            type: string
+            description: username
           minItems: 1
           maxItems: 5
     HypermediaControls:

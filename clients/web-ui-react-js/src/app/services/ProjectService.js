@@ -48,6 +48,24 @@ class ProjectService {
     return response.status === '204'
   }
 
+  async setTaskStatusFlow(projectId, taskStatuses, taskStatusTransitions) {
+    const tecnicalId = extractProjectTechnicalId(projectId)
+    const response = await HttpClient().post(
+      `/project/${tecnicalId}/task-status-flow`,
+      { taskStatuses, taskStatusTransitions }
+    )
+    return response.data
+  }
+
+  async setDetails(projectId, description, collaborators) {
+    const tecnicalId = extractProjectTechnicalId(projectId)
+    const response = await HttpClient().post(
+      `/project/${tecnicalId}/details`,
+      { description, collaborators }
+    )
+    return response.data
+  }
+
 }
 
 export default new ProjectService()

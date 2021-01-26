@@ -6,9 +6,10 @@ const { UserRoles } = require('../models/User');
 
 class TaskService {
 
-  constructor(taskRepository, analyticService) {
+  constructor(taskRepository, analyticService, projectRepository) {
     this.taskRepository = taskRepository;
     this.analyticService = analyticService;
+    this.projectRepository = projectRepository;
   }
 
   list(projectId, createdBefore, offset, limit) {
@@ -68,24 +69,30 @@ class TaskService {
   }
 
   updateTask(taskId, { title, details, points, tags, priority }) {
-    const { description, assignee, status } = details
+    const { description, assignee } = details
 
     const task = this.findByIdOrFail(taskId);
     if (title) { task.title = title; }
     if (description) { task.description = description; }
     if (assignee) { task.assignee = assignee; }
-    if (status) { task.status = status; }
     if (points && task.isUserStory()) { task.points = points; }
     if (tags) { task.tags = tags }
     if (priority) { task.priority = priority }
 
-    if (title || description || assignee || status || points || tags || priority) { this.analyticService.update(taskId); }
+    if (title || description || assignee || points || tags || priority) { this.analyticService.update(taskId); }
   }
 
   updateStatus(taskId, status) {
     const task = this.findByIdOrFail(taskId);
-    task.status = status;
-    this.analyticService.update(taskId);
+    const project = this.projectRepository.findById(task.projectId);
+
+    const isUpdateAuthorized = this._isStatusUpdateAuthorized(task, project, status)
+    if (isUpdateAuthorized) {
+      task.status = status;
+      this.analyticService.update(taskId);
+    } else {
+      throw new Errors.BusinessRuleEnforced()
+    }
   }
 
   switchArchivedStatus(taskId) {
@@ -93,6 +100,30 @@ class TaskService {
     task.isArchived = !task.isArchived
     this.analyticService.update(taskId);
     return task.isArchived
+  }
+
+  _isStatusUpdateAuthorized(task, project, newStatus) {
+    const currentStatus = task.status
+
+    if (currentStatus === newStatus) { return true }
+
+    const separateCommaDelimitedStatuses = (str) => str.split(',').map(el => el.trim())
+
+    if (project.availableTaskStatuses.find(status => status.id === newStatus) === undefined) {
+      return false
+    }
+
+    const transitionAllowingThisUpdate = project.taskStatusTransitions
+      .filter(transition =>
+        transition.from === '*' ||
+        separateCommaDelimitedStatuses(transition.from).indexOf(currentStatus) !== -1
+      )
+      .find(transition =>
+        transition.to === '*' ||
+        separateCommaDelimitedStatuses(transition.to).indexOf(newStatus) !== -1
+      )
+
+    return transitionAllowingThisUpdate !== undefined
   }
 
 }

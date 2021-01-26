@@ -33,7 +33,6 @@ const AddCollaboratorDialog = ({ projectId, onSuccessCallback, onCloseComplete }
           <Pane width="100%" display="flex" flexDirection="row" flexWrap="wrap" alignItems="flex-start" justifyContent="flex-start">
 
             <Pane width="100%" >
-
               <WithLabel label='collaborators' required>
                 <ArrayInput 
                   values={collaborators}

@@ -11,11 +11,10 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
   const [ title, setTitle ] = useState(task.title)
   const [ description, setDescription ] = useState(task.details.description)
   const [ assignee, setAssignee ] = useState(task.details.assignee)
-  const [ status, setStatus ] = useState(task.details.status)
   const [ points, setPoints ] = useState(task.points)
   const [ tags, setTags ] = useState(task.tags || [])
   const [ priority, setPriority ] = useState(task.priority)
-  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.update({...task, title, details: {description, status, assignee}, points, tags, priority}))
+  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.update({...task, title, details: {description, assignee}, points, tags, priority}))
 
   useEffect(() => {
     if (success && data) { 
@@ -29,7 +28,7 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
     title='Update task'
     isConfirmLoading={isLoading}
     // eslint-disable-next-line eqeqeq
-    isConfirmDisabled={ { ...task, title, details: { description, assignee, status }, points, tags, priority } == task }
+    isConfirmDisabled={ { ...task, title, details: { ...task.details, description, assignee }, points, tags, priority } == task }
     confirmLabel="Update"
     onConfirm={() => makeCall()}
     onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
@@ -72,17 +71,6 @@ const UpdateTaskDialog = ({ task, isShown, onSuccessCallback, onCloseComplete })
                   value={description || ''}
                   width="100%"
                   onChange={e => setDescription(e.target.value)}
-                />
-              </WithLabel>
-            </Pane>
-
-            <Pane width="100%" >
-              <WithLabel label='Status'>
-                <SelectInput 
-                  options={Array.from(new Set([ 'todo', 'in progress', 'review', task.status]))}
-                  value={status}
-                  onChange={e => setStatus(e.target.value)}
-                  required={false}
                 />
               </WithLabel>
             </Pane>

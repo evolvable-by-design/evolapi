@@ -68,9 +68,9 @@ function userController(userService) {
     res.status(204).send();
   }));
 
-  router.get('/user/:userId', AuthService.withAuth((req, res, user) => {
+  router.get('/user/:username', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const foundUser = userService.findById(req.params.userId, user.id);
+      const foundUser = userService.findByUsername(req.params.username);
       if (foundUser) {
         res.status(200).json(foundUser.publicRepresentation());
       } else {
@@ -81,7 +81,7 @@ function userController(userService) {
 
   router.get('/user', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const foundUser = userService.findById(user.id, user.id);
+      const foundUser = userService.findById(user.id);
       if (foundUser) {
         const representation = HypermediaRepresentationBuilder
           .of(foundUser)

@@ -57,12 +57,8 @@ class TaskService {
     return HttpClient().put(`/task`, task)
   }
 
-  static async toQa(taskId) {
-    return HttpClient().put(`/task/${taskId}/toQa`)
-  }
-
-  static async complete(taskId) {
-    return HttpClient().put(`/task/${taskId}/complete`)
+  static async updateStatus(taskId, newStatus) {
+    return HttpClient().put(`/task/${taskId}/status`, { status: newStatus })
   }
 
   static async delete(taskId) {

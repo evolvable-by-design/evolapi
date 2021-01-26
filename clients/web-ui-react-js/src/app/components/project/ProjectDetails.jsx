@@ -17,7 +17,7 @@ import useUserDetailsFetcher from '../../hooks/useUserDetailsFetcher'
 import useTasksList from '../../hooks/useTasksList'
 import { TaskTypes } from '../../domain/Task'
 
-const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => {
+const ProjectDetails = ({ title, isArchived, projectId, description, taskStatuses, taskStatusTransitions, refreshProjectFct }) => {
   useUserDetailsFetcher()
   
   const operations = [ 'Archive', 'Unarchive', 'Add Collaborator', 'Create technical story', 'Create user story' ]
@@ -48,8 +48,10 @@ const ProjectDetails = ({ title, isArchived, projectId, refreshProjectFct }) => 
 
       </Pane>
     </Pane>
+
+    <Heading size={700} marginBottom={majorScale(4)}>{description}</Heading>
     
-    <Tasks projectId={projectId} />
+    <Tasks projectId={projectId} taskStatuses={taskStatuses} taskStatusTransitions={taskStatusTransitions} />
     
     { operationFocus === 'Archive' ? <ArchiveProjectDialog isArchived={isArchived}  projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
       : operationFocus === 'Unarchive' ? <ArchiveProjectDialog isArchived={isArchived} projectId={projectId} onSuccessCallback={() => refreshProjectFct()} onCloseComplete={() => setOperationFocus(undefined)} />
@@ -74,7 +76,7 @@ function shouldDisplayOperation(isArchived) {
     : true
 }
 
-const Tasks = ({ projectId }) => {
+const Tasks = ({ projectId, taskStatuses, taskStatusTransitions }) => {
   const [ offset, setOffset ] = useState()
   const [ limit, setLimit ] = useState()
   const [ createdBefore, setCreatedBefore ] = useState()
@@ -141,21 +143,21 @@ const Tasks = ({ projectId }) => {
         <Button appearance="primary" onClick={() => makeCall()} marginBottom={majorScale(3)}>Filter</Button>
       </div>
       
-      <Columns labels={['todo', 'in progress', 'review', 'QA', 'done']} tasks={tasks || []} />
-      <TaskFocus tasks={tasks} onOperationInvokationSuccess={() => makeCall()} />
+      <Columns columns={taskStatuses} tasks={tasks || []} />
+      <TaskFocus tasks={tasks} onOperationInvokationSuccess={() => makeCall()} availableTaskStatuses={taskStatuses} taskStatusTransitions={taskStatusTransitions} refreshTaskList={makeCall} />
 
     </>
   }
 }
 
-const Columns = ({ labels, tasks }) => {
+const Columns = ({ columns, tasks }) => {
   return <Pane display="flex" width="100%" overflowX="scroll" flexDirection="row">
-    { labels.map(label =>
+    { columns.map(({id: columnId, label}) =>
         <Pane key={label} padding={majorScale(1)} display="flex" flexDirection="column" width="300px" minHeight="300px" marginRight={majorScale(1)} background="tint2" borderRadius={minorScale(1)}>
           <Heading marginBottom={majorScale(2)} size={400}>{label.toUpperCase()}</Heading>
           <Pane>
             { tasks
-                .filter(task => task.details.status === label)
+                .filter(task => task.details.status === columnId)
                 .map(task => 
                   <Pane key={JSON.stringify(task)} marginBottom={majorScale(1)}>
                     <TaskCard id={task.id} title={task.title} points={task.points} />

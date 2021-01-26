@@ -35,7 +35,7 @@ const taskController = function(projectService, taskService) {
       const offset = Number(req.query.offset) || 0;
       const limit = Number(req.query.limit) || 3;
   
-      const tasks = projectService.existsWithId(queryProjectId, user.id)
+      const tasks = projectService.existsWithId(queryProjectId, user.username)
         ? taskService.list(queryProjectId, createdBefore ? new Date(createdBefore) : undefined, offset, limit)
         : []
 
@@ -67,13 +67,14 @@ const taskController = function(projectService, taskService) {
     return (req, res) => AuthService.withAuth((_, __, user) => {
       Errors.handleErrorsGlobally(() => {
         const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body);
-        const { title, description, status, assignee, tags, priority } = cleanedBodyValues;
+        const { title, description, assignee, tags, priority, parentProjectId } = cleanedBodyValues;
         if (utils.isAnyEmpty([title, assignee])
-          || !validateBusinessConstraints(undefined, title, description, undefined, status, tags, priority)
+          || !validateBusinessConstraints(undefined, title, description, undefined, tags, priority)
         ) {
           Responses.badRequest(res);
         } else {
-          const createdTask = createFunction(cleanedBodyValues);
+          const initialStatus = projectService.getInitialStatus(parentProjectId)
+          const createdTask = createFunction({...cleanedBodyValues, status: initialStatus});
           Responses.created(res, taskWithHypermediaControls(createdTask, user));
         }
       }, res);
@@ -97,11 +98,11 @@ const taskController = function(projectService, taskService) {
     }, res);
   }));
 
-  router.put('/task/', AuthService.withAuth((req, res, user) => {
+  router.put('/task', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
       const cleanedBodyValues = replaceRelationUrlsWithTechnicalIds(req.body)
       const { id: taskId, title, details, points, tags, priority} = cleanedBodyValues;
-      const { description, status } = details
+      const { description } = details
 
       const task = taskService.findById(taskId)
 
@@ -109,7 +110,7 @@ const taskController = function(projectService, taskService) {
         Responses.notFound(res);
       }
 
-      projectService.findById(task.projectId, user.id)
+      projectService.findById(task.projectId, user.username)
       
       if (!validateBusinessConstraints(task, title, description, points, status, tags, priority)) {
         Responses.badRequest(res);
@@ -142,21 +143,13 @@ const taskController = function(projectService, taskService) {
     }, res);
   }));
 
-  router.put('/task/:taskId/toQa', AuthService.withAuth((req, res, user) => {
+  router.put('/task/:taskId/status', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
       const taskId = req.params.taskId;
-      taskService.updateStatus(taskId, TaskStatus.qa);
+      taskService.updateStatus(taskId, req.body.status, user.username);
       Responses.noContent(res);
     }, res);
-  }));
-
-  router.put('/task/:taskId/complete', AuthService.withAuth((req, res, user) => {
-    Errors.handleErrorsGlobally(() => {
-      const taskId = req.params.taskId;
-      taskService.updateStatus(taskId, TaskStatus.complete);
-      Responses.noContent(res);
-    }, res);
-  }));
+  }))
 
   router.post(`/task/:taskId/archive`, AuthService.withAuth((req, res) => {
     Errors.handleErrorsGlobally(() => {
@@ -172,15 +165,6 @@ const taskController = function(projectService, taskService) {
 
 function replaceRelationUrlsWithTechnicalIds(object) {
   const toReturn = Object.assign({}, object)
-
-  if (toReturn['assignee']) {
-    const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn['assignee'])
-    toReturn['assignee'] = ids ? ids.userId : undefined
-  }
-  if (toReturn['details'] && toReturn.details['assignee']) {
-    const ids = TechnicalIdsExtractor.extractUserIdParams(toReturn.details['assignee'])
-    toReturn.details['assignee'] = ids ? ids.userId : undefined
-  }
 
   if (toReturn['parentProjectId']) {
     const ids = TechnicalIdsExtractor.extractProjectIdParams(toReturn['parentProjectId'])

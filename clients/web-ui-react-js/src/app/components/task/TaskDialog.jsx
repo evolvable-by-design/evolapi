@@ -9,8 +9,9 @@ import ContainerWithLabel from '../input/ContainerWithLabel'
 import TextWithLabel from '../input/TextWithLabel'
 import useFetch from '../../hooks/useFetch'
 import UserId from '../user/UserId'
+import UpdateTaskStatusSelector from './UpdateTaskStatusSelector'
 
-const TaskDialog = ({ id, assignee, title, description, points, status, tags, priority, isArchived, actions }) => {
+const TaskDialog = ({ id, assignee, title, description, points, status, tags, priority, isArchived, actions, availableTaskStatuses, taskStatusTransitions, refreshTaskList }) => {
   const history = useHistory()
 
   // lastupdate creationDate
@@ -41,17 +42,21 @@ const TaskDialog = ({ id, assignee, title, description, points, status, tags, pr
           </Pane>
         }
 
-        <Pane><ActionsSelector actions={actions} onSelect={value => showTaskActionDialog(value, history)} /></Pane>
+        <Pane>
+          <ActionsSelector actions={actions} onSelect={value => showTaskActionDialog(value, history)} />
+        </Pane>
 
         <ContainerWithLabel label='Assignee'>
-          <UserId id={assignee} />
+          <UserId username={assignee} />
         </ContainerWithLabel>
 
         { points && <ContainerWithLabel label='Points'>
             <Pill display="inline-flex" color={points < 8 ? 'green' : points < 14 ? 'orange' : 'red'}>{points}</Pill>
           </ContainerWithLabel>}
 
-        <TextWithLabel label='Status'>{status}</TextWithLabel>
+        <ContainerWithLabel label='Status'>
+          <UpdateTaskStatusSelector taskId={id} currentStatus={status} availableTaskStatuses={availableTaskStatuses} taskStatusTransitions={taskStatusTransitions} onChange={refreshTaskList} />
+        </ContainerWithLabel>
 
         { priority && <TextWithLabel label='Priority'><Badge>{priority}</Badge></TextWithLabel> }
 

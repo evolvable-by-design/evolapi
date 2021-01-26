@@ -6,8 +6,14 @@ import HttpClient from '../../services/HttpClient'
 
 import UserBadge from './UserBadge'
 
-const UserId = ({ id, noLabel }) => {
-  const { makeCall, isLoading, data: user } = useFetch(() => HttpClient().get(id).then(res => res.data))
+const UserId = ({ id, username, noLabel }) => {
+  const { makeCall, isLoading, data: user } = useFetch(() => {
+    if (id && id.startsWith('/user')) {
+      return HttpClient().get(id).then(res => res.data)
+    } else if (username) {
+      return HttpClient().get(`/user/${username}`).then(res => res.data)
+    }
+  })
   useEffect(makeCall, [])
 
   if (user) {

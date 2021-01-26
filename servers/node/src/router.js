@@ -9,8 +9,8 @@ const taskRepository = new CrudRepository();
 
 const analyticService = new (require('./services/analytic-service'))(analyticRepository, projectRepository, taskRepository);
 const userService = require('./services/user-service');
-const projectService = new (require('./services/project-service'))(projectRepository, userService, analyticService);
-const taskService = new (require('./services/task-service'))(taskRepository, analyticService);
+const projectService = new (require('./services/project-service'))(projectRepository, analyticService);
+const taskService = new (require('./services/task-service'))(taskRepository, analyticService, projectRepository);
 
 router.use(require('./controllers/documentation'))
 router.use(require('./controllers/user-controller')(userService))

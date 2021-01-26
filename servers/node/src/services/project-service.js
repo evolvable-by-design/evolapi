@@ -6,51 +6,50 @@ const { UserRoles } = require('../models/User');
 
 class ProjectService {
 
-  constructor(projectRepository, userService, analyticService) {
-    this.userService = userService;
+  constructor(projectRepository, analyticService) {
     this.projectRepository = projectRepository;
     this.analyticService = analyticService;
   }
 
-  list(userId, offset, limit) {
+  list(username, offset, limit) {
     const actualOffset = offset || 0;
     const actualLimit = limit || 5;
 
     return this.projectRepository.all()
-      .filter(project => project.collaborators.includes(userId))
+      .filter(project => project.collaborators.includes(username))
       .slice(actualOffset, actualOffset + actualLimit)
   }
 
-  count(userId) {
+  count(username) {
     return this.projectRepository.all()
-      .filter(project => project.collaborators.includes(userId))
+      .filter(project => project.collaborators.includes(username))
       .length
   }
 
-  findById(id, userId) {
+  findById(id, username) {
     const project = this.projectRepository.all().find(p => p.id === id);
 
     if (project === undefined) {
       throw new Errors.NotFound()
-    } else if (project.collaborators.includes(userId)) {
+    } else if (project.collaborators.includes(username)) {
       return project
     } else {
       throw new Errors.ForbiddenException()
     }
   }
 
-  existsWithId(id, userId) {
+  existsWithId(id, username) {
     try {
-      this.findById(id, userId)
+      this.findById(id, username)
       return true
     } catch (error) {
       return false
     }
   }
 
-  existsWithName(name, userId) {
+  existsWithName(name, username) {
     return this.projectRepository.all()
-      .find(p => p.name === name && p.collaborators.includes(userId)) !== undefined;
+      .find(p => p.name === name && p.collaborators.includes(username)) !== undefined;
   }
 
   create(name, owner) {
@@ -66,16 +65,38 @@ class ProjectService {
     }
   }
 
+  setTaskStatusFlow(id, username, taskStatuses, taskStatusTransitions) {
+    return this._nextCreationStep(id, username, 1, { taskStatuses, taskStatusTransitions })
+  }
+
+  setDetails(id, username, description, collaborators) {
+    return this._nextCreationStep(id, username, 2, { description, collaborators })
+  }
+
+  _nextCreationStep(id, username, stepIndex, options) {
+    const project = this.findById(id, username);
+
+    if (!project) {
+      throw new Errors.NotFound();
+    } else if (project.nextCreationStep !== stepIndex) {
+      throw new Errors.BusinessRuleEnforced();
+    } else {
+      const newProjectState = project.continueCreation(options)
+      this.analyticService.update(project.id);
+      return newProjectState
+    }
+  }
+
   delete(id, user) {
     if (user.role !== UserRoles.PO) {
       throw new Errors.ForbiddenException()
     }
 
-    const project = this.findById(id, user.id);
+    const project = this.findById(id, user.username);
 
     if (!project) {
       throw new Errors.NotFound();
-    } else if (!project.isArchived) {
+    } else if (!project.isArchived || project.nextCreationStep !== null) {
       throw new Errors.BusinessRuleEnforced();
     } else {
       this.analyticService.update(project.id);
@@ -83,11 +104,13 @@ class ProjectService {
     }
   }
 
-  archive(id, userId) {
-    const project = this.findById(id, userId);
+  archive(id, username) {
+    const project = this.findById(id, username);
 
     if (!project) {
       throw new Errors.NotFound();
+    } else if (project.nextCreationStep !== null) {
+      throw new Errors.BusinessRuleEnforced('The project creation must have been completed.');
     } else {
       project.isArchived = !project.isArchived;
       this.analyticService.update(project.id);
@@ -95,24 +118,22 @@ class ProjectService {
     }
   }
 
-  inviteCollaborators(id, requesterId, collaboratorsIdOrEmail) {
+  inviteCollaborators(id, requesterId, collaboratorsToAdd) {
     const project = this.findById(id, requesterId);
 
-    if (project) {
-      const users = Array.from(this.userService.all());
-
-      const collaboratorsToAdd = collaboratorsIdOrEmail
-        .map(idOrEmail =>
-          users.find(user => user.id === idOrEmail || user.email === idOrEmail)
-        )
-        .filter(entry => entry !== undefined)
-        .map(user => user.id);
-
+    if (!project) {
+      throw new Errors.NotFound();
+    } else if (project.nextCreationStep !== null) {
+      throw new Errors.BusinessRuleEnforced('The project creation must have been completed.');
+    } else {
       project.addCollaborators(collaboratorsToAdd);
       this.analyticService.update(project.id);
-    } else {
-      throw new Errors.NotFound();
     }
+  }
+
+  getInitialStatus(projectId) {
+    const project = this.projectRepository.all().find(p => p.id === projectId);
+    return project.availableTaskStatuses[0].id
   }
 
 }

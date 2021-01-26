@@ -10,7 +10,7 @@ import ConfirmOperationDialog from '../basis/ConfirmOperationDialog'
 import TaskDialog from './TaskDialog'
 import UpdateTaskDialog from './UpdateTaskDialog'
 
-const TaskFocus = ({ tasks, onOperationInvokationSuccess }) => {
+const TaskFocus = ({ tasks, onOperationInvokationSuccess, availableTaskStatuses, taskStatusTransitions, refreshTaskList }) => {
   const { taskFocus, actionFocus } = useQuery()
   const history = useHistory()
   const { userProfile } = useAppContextState()
@@ -38,6 +38,9 @@ const TaskFocus = ({ tasks, onOperationInvokationSuccess }) => {
       description={task.details.description}
       {...task} 
       actions={Object.keys(actions)}
+      availableTaskStatuses={availableTaskStatuses}
+      taskStatusTransitions={taskStatusTransitions}
+      refreshTaskList={refreshTaskList}
     />
   } else {
     return null
@@ -56,15 +59,11 @@ function taskActions(task, onOperationInvokationSuccess, history, userProfile) {
   const actions = {
     Update: () => <UpdateTaskDialog task={task} isShown={true} {...commonProps} />,
     Delete: () => <ConfirmOperationDialog operation={() => TaskService.delete(task.id)} title='Delete' {...commonProps} intent='danger' />,
-    "Move to QA": () => <ConfirmOperationDialog operation={() => TaskService.toQa(task.id)} title='Move to QA' {...commonProps} />,
-    Complete: () => <ConfirmOperationDialog operation={() => TaskService.complete(task.id)} title='Complete' {...commonProps} />,
     Archive: () => <ConfirmOperationDialog operation={() => TaskService.archive(task.id)} title='Archive' {...commonProps} />,
     Unarchive: () => <ConfirmOperationDialog operation={() => TaskService.archive(task.id)} title='Unarchive' {...commonProps} />,
   }
 
   if (userProfile?.role !== 'ProductOwner') delete actions['Delete']
-  if (task.details.status !== 'QA') delete actions['Complete'];
-  if (task.details.status === 'QA') delete actions['Move to QA'];
   if (task.isArchived) {
     delete actions['Archive']
   } else {

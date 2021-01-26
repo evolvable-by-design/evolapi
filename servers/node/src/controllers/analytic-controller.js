@@ -18,7 +18,7 @@ const analyticController = function(analyticService, projectService, taskService
         Responses.notFound(res)
       } else {
         const representation = maybeAnalytic.representation(ReverseRouter)
-        representation.resourceId = resolveResourceUri(representation.resourceId, user.id, projectService, taskService)
+        representation.resourceId = resolveResourceUri(representation.resourceId, user, projectService, taskService)
         Responses.ok(res, representation)
       }
     }, res);
@@ -28,9 +28,9 @@ const analyticController = function(analyticService, projectService, taskService
 
 }
 
-function resolveResourceUri(resourceId, userId, projectService, taskService) {
+function resolveResourceUri(resourceId, user, projectService, taskService) {
   const project = notFoundExceptionToUndefined(
-    () => projectService.findById(resourceId, userId)
+    () => projectService.findById(resourceId, user.username)
   )
 
   if (project) return ReverseRouter.forProject(resourceId)

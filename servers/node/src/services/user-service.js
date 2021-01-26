@@ -35,13 +35,21 @@ class UserService {
     return this.users.find(user => user.id === id );  
   }
 
-  findById(id, requesterId) {
-    const foundUser = this.users.find(user => user.id === id );
+  _find(predicate) {
+    const foundUser = this.users.find(predicate);
     if (foundUser) {
       return foundUser;
     } else {
       throw new Errors.NotFound
     }
+  }
+
+  findById(id) {
+    return this._find(user => user.id === id);
+  }
+
+  findByUsername(username) {
+    return this._find(user => user.username === username);
   }
 
   areUsernameAndEmailFree(username, email) {

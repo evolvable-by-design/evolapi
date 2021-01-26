@@ -12,19 +12,18 @@ const CreateProjectDialog = ({ isShown, onSuccessCallback, onCloseComplete }) =>
 
   useEffect(() => {
     if (success && data) { 
-      onSuccessCallback()
-      onCloseComplete()
+      onSuccessCallback(data)
     }
   }, [success, data, onSuccessCallback, onCloseComplete])
 
   return <Dialog
     isShown={isShown}
-    title='Create a project'
+    title='Create a project (step 1/3)'
     isConfirmLoading={isLoading}
-    confirmLabel="Create project"
+    confirmLabel="Next"
     onConfirm={() => makeCall()}
     isConfirmDisabled={name === undefined}
-    onCloseComplete={() => { if (success) { onSuccessCallback(data) } onCloseComplete() }}
+    onCloseComplete={onCloseComplete}
     hasHeader={!(success && data)}
     hasFooter={!success}
     width="auto"

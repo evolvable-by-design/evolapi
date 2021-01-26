@@ -17,7 +17,7 @@ const ActionsSelector = ({ actions, onSelect }) =>
         </Menu.Group>
       </Menu>
   }>
-    <Button marginRight={majorScale(2)} marginBottom={majorScale(1)} iconAfter="caret-down">Actions</Button>
+    <Button width='100%' marginRight={majorScale(2)} marginBottom={majorScale(1)} iconAfter="caret-down">Actions</Button>
   </Popover>
 
 export default ActionsSelector

@@ -13,14 +13,16 @@ const { UserRoles } = require('../models/User')
 function projectWithHypermediaControls(project, user) {
   return HypermediaRepresentationBuilder
     .of(project)
-    .representation(_ => project.representation(ReverseRouter))
-    .link(HypermediaControls.inviteUser(project))
-    .link(HypermediaControls.createTask(project), !project.isArchived)
-    .link(HypermediaControls.listTasks(project))
-    .link(HypermediaControls.reverseArchivedState(project))
-    .link(HypermediaControls.delete(project), project.isArchived && user.role === UserRoles.PO)
+    .representation(_ => project.representation())
+    .link(HypermediaControls.inviteUser(project), project.nextCreationStep === null)
+    .link(HypermediaControls.createTask(project), !project.isArchived && project.nextCreationStep === null)
+    .link(HypermediaControls.listTasks(project), project.nextCreationStep === null)
+    .link(HypermediaControls.reverseArchivedState(project), project.nextCreationStep === null)
+    .link(HypermediaControls.delete(project), project.isArchived && user.role === UserRoles.PO && project.nextCreationStep === null)
     .link(HypermediaControls.star(project))
     .link(HypermediaControls.analytics(project))
+    .link(HypermediaControls.setTaskStatusesFlow(project), project.nextCreationStep === 1)
+    .link(HypermediaControls.setDetails(project), project.nextCreationStep === 2)
     .build();
 }
 
@@ -31,7 +33,7 @@ function projectController(projectService, userService) {
   router.get('/projects', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
       const { offset, limit } = req.query
-      const projects = projectService.list(user.id, offset, limit);
+      const projects = projectService.list(user.username, offset, limit);
       
       const representation = HypermediaRepresentationBuilder
         .of(projects)
@@ -40,7 +42,7 @@ function projectController(projectService, userService) {
         .link(HypermediaControls.createProject)
         .build();
 
-      const projectsCount = projectService.count(user.id)
+      const projectsCount = projectService.count(user.username)
       if (projectsCount > offset + limit - 1) {
         res.append('X-Next', `/projects/?offset=${offset+limit}&limit=${limit}`);
       }
@@ -56,7 +58,7 @@ function projectController(projectService, userService) {
       if(utils.isEmpty(req.body.name)) {
         res.status(400).send(new Errors.HttpError(400));
       } else {
-        const newProject = projectService.create(req.body.name, user.id);
+        const newProject = projectService.create(req.body.name, user.username);
         res.status(201)
           .location(ReverseRouter.forProject(newProject.id))
           .json(projectWithHypermediaControls(newProject, user));
@@ -64,9 +66,48 @@ function projectController(projectService, userService) {
     }, res);
   }));
 
+  router.post('/project/:id/task-status-flow', AuthService.withAuth((req, res, user) =>
+    Errors.handleErrorsGlobally(() => {
+      const { taskStatuses, taskStatusTransitions } = req.body
+      if (taskStatuses == null
+        || (taskStatuses instanceof Array && taskStatuses.length === 0)
+        || taskStatuses.find(el => el.id == null || el.label == null) !== undefined
+        || taskStatusTransitions == null
+        || (taskStatusTransitions instanceof Array && taskStatusTransitions.length === 0)
+        || taskStatusTransitions.find(el => el.from == null || el.to == null) !== undefined
+      ) {
+        throw Errors.BusinessRuleEnforced()
+      }
+
+      const updatedProject = projectService.setTaskStatusFlow(
+        req.params.id,
+        user.username,
+        taskStatuses,
+        taskStatusTransitions,
+      )
+      Responses.ok(res, projectWithHypermediaControls(updatedProject, user))
+    }, res)
+  ))
+
+  router.post('/project/:id/details', AuthService.withAuth((req, res, user) =>
+    Errors.handleErrorsGlobally(() => {
+      if (utils.isEmpty(req.body.description)) {
+        throw Errors.BusinessRuleEnforced()
+      }
+
+      const updatedProject = projectService.setDetails(
+        req.params.id,
+        user.username,
+        req.body.description,
+        req.body.collaborators || []
+      )
+      Responses.ok(res, projectWithHypermediaControls(updatedProject, user))
+    }, res)
+  ))
+
   router.get('/project/:id', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const project = projectService.findById(req.params.id, user.id);
+      const project = projectService.findById(req.params.id, user.username);
       Responses.ok(res, projectWithHypermediaControls(project, user));
     }, res)
   }));
@@ -83,15 +124,7 @@ function projectController(projectService, userService) {
       if (utils.isEmpty(req.body.users) || !(req.body.users instanceof Array) || req.body.users.length > 5) {
         Responses.badRequest(res);
       } else {
-        const users = req.body.users.map(user => {
-          if (user.indexOf('@') === -1) { // user is an email address
-            return user
-          } else { 
-            return TechnicalIdsExtractor.extractUserIdParams(user).userId
-          }
-        })
-
-        projectService.inviteCollaborators(req.params.id, user.id, users);
+        projectService.inviteCollaborators(req.params.id, user.username, req.body.users);
         Responses.noContent(res);
       }
     }, res)
@@ -99,16 +132,20 @@ function projectController(projectService, userService) {
 
   router.post('/project/:id/archive', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const newArchivedState = projectService.archive(req.params.id, user.id);
+      const newArchivedState = projectService.archive(req.params.id, user.username);
       Responses.ok(res, { isArchived: newArchivedState });
     }, res)
   }));
 
   router.post('/project/:id/star', AuthService.withAuth((req, res, user) => {
     Errors.handleErrorsGlobally(() => {
-      const project = projectService.findById(req.params.id, user.id)
-      userService.switchStarredStatus(user.id, project.id)
-      Responses.noContent(res);
+      const project = projectService.findById(req.params.id, user.username)
+      if (project.nextCreationStep === null) {
+        userService.switchStarredStatus(user.username, project.id)
+        Responses.noContent(res);
+      } else {
+        throw new Errors.BusinessRuleEnforced()
+      }
     }, res)
   }));
 

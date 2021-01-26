@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Alert, Button, Pane, Text, Heading, TextInputField, majorScale } from 'evergreen-ui';  
 
-import CreateProjectDialog from './CreateProjectDialog'
+import CreateProjectDialogs from './CreateProjectDialogs'
 import ProjectCard from './ProjectCard';
 import FullscreenError from '../basis/FullscreenError';
 import useFetch from '../../hooks/useFetch';
@@ -16,7 +16,7 @@ const Projects = () => {
   const { makeCall, isLoading, data, error } = useFetch(() => ProjectService.list({ offset, limit }))
   const { projects, nextPage, lastPage } = data || {}
 
-  const [ showCreateProjectDialog, setShowCreateProjectDialog ] = useState(false)
+  const [ showCreateProjectDialogs, setShowCreateProjectDialogs ] = useState({ show: false })
 
   const isOffsetInvalid = useMemo(() => offset !== undefined && (isNaN(offset) || (!isNaN(offset) && offset < 0)), [offset])
   const isLimitInvalid = useMemo(() => limit !== undefined && (isNaN(limit) || (!isNaN(limit) && limit < 0)), [limit])
@@ -24,6 +24,7 @@ const Projects = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => makeCall(), [])
 
+  const continueProjectCreation = (project) => setShowCreateProjectDialogs({ show: true, project })
   
   if (isLoading) {
     return <Text>Loading...</Text>
@@ -65,12 +66,17 @@ const Projects = () => {
       <Button appearance="primary" onClick={() => makeCall(() => ProjectService.list({ offset, limit }))} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Update</Button>
       { !AuthenticationService.isAuthenticated() && <Alert intent="none" marginBottom={32} title="Login to see more actions."/> }
       { AuthenticationService.isAuthenticated() && 
-          <Button appearance="primary" onClick={() => setShowCreateProjectDialog(true)} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Create project</Button>
+          <Button appearance="primary" onClick={() => setShowCreateProjectDialogs({ show: true })} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Create project</Button>
       }
 
-      <CreateProjectDialog isShown={showCreateProjectDialog} onSuccessCallback={() => makeCall()} onCloseComplete={() => setShowCreateProjectDialog(false)}/>
+      <CreateProjectDialogs
+        isShown={showCreateProjectDialogs.show}
+        project={showCreateProjectDialogs.project}
+        onSuccessCallback={() => { makeCall(); setShowCreateProjectDialogs({ show: false }); }}
+        onCloseComplete={() => setShowCreateProjectDialogs({ show: false })}
+      />
 
-      <ProjectCards projects={projects} />
+      <ProjectCards projects={projects} continueProjectCreation={continueProjectCreation} />
 
       { nextPage && <Button appearance="primary" onClick={() => makeCall(() => ProjectService.list({ url: nextPage }))} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Next Page</Button>}
       { lastPage && <Button appearance="primary" onClick={() => makeCall(() => ProjectService.list({ url: lastPage }))} marginBottom={majorScale(3)} marginRight={majorScale(1)}>Last Page</Button>}
@@ -78,7 +84,7 @@ const Projects = () => {
   }
 };
 
-const ProjectCards = ({projects}) => {
+const ProjectCards = ({projects, continueProjectCreation}) => {
   if (projects !== undefined) {
     return <Pane width='100%' display='flex' flexDirection='row' flexWrap='wrap'>
       { projects.map(project => 
@@ -87,6 +93,8 @@ const ProjectCards = ({projects}) => {
             id={project.id}
             title={project.name}
             collaborators={project.collaborators}
+            continueProjectCreation={() => continueProjectCreation(project)}
+            nextCreationStep={project.nextCreationStep}
           />) 
       }
     </Pane>
