@@ -1,5 +1,8 @@
-import HttpClient from './HttpClient'
+import convert from 'xml-js';
+
+import HttpClient from './HttpClient';
 import { extractProjectTechnicalId } from '../utils/ResourceUtils'
+import { toText, toBoolean, toArray } from '../utils/XmlUtils'
 
 class ProjectService {
 
@@ -7,7 +10,9 @@ class ProjectService {
     const response = await HttpClient().get(
       url ? url : `/projects?offset=${offset || 0}&limit=${limit || 10}`
     )
-    return { projects: response.data.projects, nextPage: response.headers['x-next'], lastPage: response.headers['x-last'] }
+
+    const data = parseProjectsListXml(response.data)
+    return { projects: data.projects, nextPage: response.headers['x-next'], lastPage: response.headers['x-last'] }
   }
 
   async create(name) {
@@ -66,6 +71,43 @@ class ProjectService {
     return response.data
   }
 
+}
+
+function parseProjectsListXml(xml) {
+  const convertedData = convert.xml2js(`<root>${xml}</root>`, {compact: true})
+
+  const projects = toArray(convertedData.root.projects).map(project => ({
+    id: toText(project.id),
+    name: toText(project.name),
+    isArchived: toBoolean(project.isArchived),
+    collaborators: toArray(project.collaborators).map(toText),
+    description: toText(project.description),
+    availableTaskStatuses: toArray(project.availableTaskStatuses)
+      .map(status => ({
+        id: toText(status.id),
+        label: toText(status.label)
+      })),
+    taskStatusTransitions: toArray(project.taskStatusTransitions)
+      .map(status => ({
+        from: toText(status.from),
+        to: toText(status.to)
+      })),
+    nextCreationStep: toText(project.nextCreationStep)
+  }))
+
+  const links = toArray(convertedData.root.projects).map(link => {
+    if (link.relation !== undefined) {
+      // does not support parameters parsing
+      return toText(link.relation)
+    } else {
+      return toText(link)
+    }
+  })
+
+  return {
+    projects,
+    _links: links
+  }
 }
 
 export default new ProjectService()

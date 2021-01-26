@@ -1,4 +1,5 @@
 const express = require('express');
+const convert = require('xml-js');
 
 const utils = require('./utils');
 const { HypermediaRepresentationBuilder } = require('../hypermedia/hypermedia');
@@ -47,8 +48,10 @@ function projectController(projectService, userService) {
       }
 
       res.append('X-Last', `/projects?offset=${projectsCount-limit > 0 ? projectsCount-limit : 0 }&limit=${limit}`)
-
-      res.status(200).json(representation);
+      
+      res.status(200)
+        .type('application/xml')
+        .send(convert.js2xml(representation, { compact: true }));
     }, res);
   }));
 

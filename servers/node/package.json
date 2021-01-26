@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "description": "Server of Evol API implemented with Node",
   "main": "index.js",
   "scripts": {
@@ -21,6 +21,7 @@
     "jsonwebtoken": "8.5.1",
     "morgan": "1.9.1",
     "uuid": "3.3.3",
+    "xml-js": "1.6.11",
     "yamljs": "0.3.0"
   }
 }

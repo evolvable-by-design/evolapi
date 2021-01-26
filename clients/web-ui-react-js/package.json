@@ -1,6 +1,6 @@
 {
   "name": "evaluation-client",
-  "version": "13.0.0",
+  "version": "14.0.0",
   "private": true,
   "dependencies": {
     "ajv": "6.10.2",
@@ -10,7 +10,8 @@
     "react": "16.9.0",
     "react-dom": "16.9.0",
     "react-router-dom": "5.1.0",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "xml-js": "1.6.11"
   },
   "scripts": {
     "start": "react-app-rewired start",

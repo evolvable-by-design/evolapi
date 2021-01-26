@@ -336,7 +336,7 @@ paths:
     parameters: 
       - $ref: '#/components/parameters/projectId'
     post:
-      summary: Set the project details (step 2/3 of the process to create a project)
+      summary: Set the project details (step 2/3 of the process to create a project). The returned project will have a nextCreationStep set to 'CREATION_COMPLETED'.
       operationId: setProjectDetails
       tags:
         - projects
