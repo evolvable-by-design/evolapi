@@ -273,7 +273,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
     post:
-      summary: Creates a project
+      summary: First step of the process to create a project out of three steps
       operationId: createProject
       tags:
         - projects
@@ -297,7 +297,7 @@ paths:
     parameters: 
       - $ref: '#/components/parameters/projectId'
     post:
-      summary: Set the tasks status flow of the project
+      summary: Set the tasks status flow of the project (step 2/3 of the process to create a project)
       operationId: setProjectTaskStatusFlow
       tags:
         - projects
@@ -336,7 +336,7 @@ paths:
     parameters: 
       - $ref: '#/components/parameters/projectId'
     post:
-      summary: Set the project details
+      summary: Set the project details (step 3/3 of the process to create a project)
       operationId: setProjectDetails
       tags:
         - projects
