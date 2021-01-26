@@ -73,7 +73,7 @@ const Projects = () => {
         isShown={showCreateProjectDialogs.show}
         project={showCreateProjectDialogs.project}
         onSuccessCallback={() => { makeCall(); setShowCreateProjectDialogs({ show: false }); }}
-        onCloseComplete={() => setShowCreateProjectDialogs({ show: false })}
+        onCloseComplete={() => { makeCall(); setShowCreateProjectDialogs({ show: false }); }}
       />
 
       <ProjectCards projects={projects} continueProjectCreation={continueProjectCreation} />

@@ -13,10 +13,9 @@ const TaskCreationDialog = ({ projectId, onSuccessCallback, onCloseComplete, typ
   const [ description, setDescription ] = useState()
   const [ assignee, setAssignee ] = useState()
   const [ points, setPoints ] = useState()
-  const [ status, setStatus ] = useState()
   const [ priority, setPriority ] = useState()
   const [ tags, setTags ] = useState([])
-  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.create(type, {parentProjectId: `/project/${projectId}`, title, description, assignee, points, status, tags, priority}))
+  const { makeCall, isLoading, success, data, error } = useFetch(() => TaskService.create(type, {parentProjectId: `/project/${projectId}`, title, description, assignee, points, tags, priority}))
 
   useEffect(() => {
     if (success && data) { 

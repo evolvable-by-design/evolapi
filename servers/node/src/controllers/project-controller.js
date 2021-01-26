@@ -6,7 +6,6 @@ const HypermediaControls = require('../hypermedia/project');
 const Errors = require('../utils/errors');
 const Responses = require('../utils/responses');
 const ReverseRouter = require('../reverse-router');
-const { TechnicalIdsExtractor } = require('../utils/router-utils');
 const AuthService = require('../services/auth-service');
 const { UserRoles } = require('../models/User')
 
