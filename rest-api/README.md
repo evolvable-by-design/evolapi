@@ -2,7 +2,7 @@
 
 The REST API is the core of _EvolApi_ above which are implemented several artifacts such as servers and clients.
 
-The API implements 110 evolutions of all the types of evolution that have been observed in the scientific litterature. These 26 types of evolutions are listed in the below table. We distributed these evolutions into 16 versions.
+The API implements 110 evolutions of all the types of evolution that have been observed in the scientific litterature. These 27 types of evolutions are listed in the below table. We distributed these evolutions into 16 versions.
 
 Functionally, _EvolApi_ imitates the project management software [Jira](https://www.atlassian.com/software/jira). With this API, multiple users collaborate on projects. A user can create public or private projects, invite other users to collaborate on the project, archive, delete or add tasks to it. The tasks have several operations and well-defined state transitions: they must be archived to be removable and only the tasks in a certain state can be completed. The REST API has up to 28 operations, depending on the version.
 
@@ -27,7 +27,7 @@ Leveraging the scientific litterature available ([[1]](#ref1), [[2]](#ref2), [[3
 | 8 | Change Format of Return Value (✗ breaking) |
 | 9 | Combine Methods (✗ breaking) |
 | 10 | Split Method (✗ breaking) |
-| 11 | Change Structure of Return Value (✗ breaking) |
+| 11 | Change Media-Type of Return Value (✗ breaking) |
 | 12 | Restrict Access to API (✓ non-breaking) |
 | 13 | Move API elements (✗ breaking) |
 | 14 | Rename API elements (✗ breaking) |
@@ -37,12 +37,13 @@ Leveraging the scientific litterature available ([[1]](#ref1), [[2]](#ref2), [[3
 | 18 | Error condition change (✓ non-breaking) |
 | 19 | Change Parameter's Schema Constraints (✓ non-breaking) |
 | 20 | Add operation (✓ non-breaking) |
-| 21 | Request Method change (e.g. POST, PUT, etc.) (✗ breaking) |
-| 22 | Precondition change (✓ non-breaking) |
-| 23 | The order in which a set of operations must be played to achieve a business process changed (✓ non-breaking) |
-| 24 | The set of operations to execute to achieve a business process changed (✓ non-breaking) |
-| 25 | Move Parameters (✗ breaking) |
-| 26 | Remove Return Value (✗ breaking) |
+| 21 | Add API elements (✓ non-breaking) |
+| 22 | Change Request Method (e.g. POST, PUT, etc.) (✗ breaking) |
+| 23 | Precondition change (✓ non-breaking) |
+| 24 | The order in which a set of operations must be played to achieve a business process changed (✓ non-breaking) |
+| 25 | The set of operations to execute to achieve a business process changed (✓ non-breaking) |
+| 26 | Move Parameters (✗ breaking) |
+| 27 | Remove API elements (✗ breaking) |
 
 
 To get more details along with example illustrating each type of evolution, please refer to the [details of REST API evolutions document](/documentation/detailed-rest-api-evolutions.md)
