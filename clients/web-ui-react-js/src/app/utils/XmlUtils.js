@@ -3,7 +3,7 @@ export function toText(field, fallbackValue) {
 }
 
 export function toBoolean(field, fallbackValue) {
-  return field !== undefined ? field._text === 'true' || fallbackValue : fallbackValue
+  return field !== undefined ? field._text === 'true' : fallbackValue
 }
 
 export function toArray(field) {

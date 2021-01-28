@@ -92,7 +92,7 @@ function parseProjectsListXml(xml) {
         from: toText(status.from),
         to: toText(status.to)
       })),
-    nextCreationStep: toText(project.nextCreationStep)
+    nextCreationStep: toText(project.nextCreationStep, null)
   }))
 
   const links = toArray(convertedData.root.projects).map(link => {
