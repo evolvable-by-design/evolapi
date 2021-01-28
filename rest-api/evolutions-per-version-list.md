@@ -127,6 +127,11 @@ type taskStatusTransitions = Array<{
 
 - When a project is completely created, the value of `nextCreationStep` is now `null` instead of `CREATION_COMPLETED` -> Post condition change (n°16)
 
+## v16.0.0
+
+- Remove the operation to star a project (n°4)
+- Split the operation to reverse the archived state of a task to one archive and one unarchive operation (n°10)
+
 ### Occurences per type of change
 
 1. 6
