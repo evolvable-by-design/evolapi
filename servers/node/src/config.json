@@ -1,6 +1,6 @@
 {
   "users": [
-    { "username": "admin", "password": "password", "email": "admin@example.com", "role": "ProductOwner", "starredProjects": [] },
-    { "username": "user", "password": "password", "email": "dev@example.com", "role": "Developer", "starredProjects": [] }
+    { "username": "admin", "password": "password", "email": "admin@example.com", "role": "ProductOwner" },
+    { "username": "user", "password": "password", "email": "dev@example.com", "role": "Developer" }
   ]
 }

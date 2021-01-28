@@ -1,6 +1,6 @@
 openapi: "3.0.0"
 info:
-  version: 15.0.0
+  version: 16.0.0
   title: Jeera Project Manager
   license:
     name: MIT
@@ -429,8 +429,12 @@ paths:
                 points: '$response.body#/points'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
+            archive:
+              operationId: archiveTask
+              parameters:
+                taskId: '$response.body#/id'
+            unarchive:
+              operationId: unarchiveTask
               parameters:
                 taskId: '$response.body#/id'
             delete:
@@ -500,8 +504,12 @@ paths:
                 points: '$response.body#/points'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
+            archive:
+              operationId: archiveTask
+              parameters:
+                taskId: '$response.body#/id'
+            unarchive:
+              operationId: unarchiveTask
               parameters:
                 taskId: '$response.body#/id'
             delete:
@@ -526,9 +534,9 @@ paths:
       security: 
         - bearerToken: []
   /task/{taskId}/archive:
-    post:
-      description: Reverse the archived status of a task
-      operationId: reverseTaskArchivedState
+    put:
+      description: Archive a task
+      operationId: archiveTask
       tags:
         - tasks
       parameters: 
@@ -539,45 +547,8 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        '204':
           description: Success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  isArchived:
-                    type: boolean
-                required: [ isArchived ]
-          links:
-            update:
-              operationId: updateTask
-              parameters:
-                taskId: '$response.body#/id'
-                id: '$response.body#/id'
-                title: '$response.body#/title'
-                description: '$response.body#/details/description'
-                assignee: '$response.body#/details/assignee'
-                points: '$response.body#/points'
-                tags: '$response.body#/details/tags'
-                priority: '$response.body#/details/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
-              parameters:
-                taskId: '$response.body#/id'
-            delete:
-              operationId: deleteTask
-              parameters:
-                taskId: '$response.body#/id'
-            updateStatus:
-              operationId: updateTaskStatus
-              parameters:
-                taskId: '$response.body#/id'
-            analytics:
-              operationId: getAnalytics
-              x-@relation: vnd_jeera:rel/analytics
-              parameters:
-                resourceId: '$response.body#/id'
         default:
           description: unexpected error
           content:
@@ -586,14 +557,19 @@ paths:
                 $ref: "#/components/schemas/Error"
       security: 
         - bearerToken: []
-  /project/{projectId}/star:
-    post:
-      description: Reverse starred status of a project
-      operationId: starProject
-      parameters: 
-        - $ref: '#/components/parameters/projectId'
+  /task/{taskId}/unarchive:
+    put:
+      description: Unarchive a task
+      operationId: unarchiveTask
       tags:
-        - projects
+        - tasks
+      parameters: 
+        - name: taskId
+          in: path
+          description: Id of the task to unarchive
+          required: true
+          schema:
+            type: string
       responses:
         '204':
           description: Success
@@ -603,7 +579,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-      security:
+      security: 
         - bearerToken: []
   /project/{projectId}/addCollaborator:
     post:
@@ -761,8 +737,12 @@ paths:
                 points: '$response.body#/points'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
+            archive:
+              operationId: archiveTask
+              parameters:
+                taskId: '$response.body#/id'
+            unarchive:
+              operationId: unarchiveTask
               parameters:
                 taskId: '$response.body#/id'
             delete:
@@ -825,8 +805,12 @@ paths:
                 points: '$response.body#/points'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
+            archive:
+              operationId: archiveTask
+              parameters:
+                taskId: '$response.body#/id'
+            unarchive:
+              operationId: unarchiveTask
               parameters:
                 taskId: '$response.body#/id'
             delete:
@@ -881,8 +865,12 @@ paths:
                 points: '$response.body#/points'
                 tags: '$response.body#/tags'
                 priority: '$response.body#/priority'
-            reverseArchivedState:
-              operationId: reverseTaskArchivedState
+            archive:
+              operationId: archiveTask
+              parameters:
+                taskId: '$response.body#/id'
+            unarchive:
+              operationId: unarchiveTask
               parameters:
                 taskId: '$response.body#/id'
             updateStatus:
@@ -958,10 +946,6 @@ components:
             projectId: '$response.body#/id'
         delete:
           operationId: deleteProject
-          parameters:
-            projectId: '$response.body#/id'
-        star:
-          operationId: starProject
           parameters:
             projectId: '$response.body#/id'
         analytics:
@@ -1050,10 +1034,6 @@ components:
           format: email
         role:
           $ref: '#/components/schemas/UserRole'
-        starredProjects:
-          type: array
-          items:
-            type: string
     LoginRequest:
       type: object
       properties:

@@ -18,8 +18,7 @@ class UserService {
       user.username,
       user.password,
       user.email,
-      user.role,
-      user.starredProjects
+      user.role
     ))
     
     this.users.forEach(u => u.confirmEmail())
@@ -63,7 +62,7 @@ class UserService {
       }
 
       const actualRole = role ? role : UserRoles.default;
-      const newUser = new User(uuid(), username, password, email, actualRole, []);
+      const newUser = new User(uuid(), username, password, email, actualRole);
 
       this.users.push(newUser);
 

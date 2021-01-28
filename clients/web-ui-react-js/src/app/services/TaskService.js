@@ -66,7 +66,11 @@ class TaskService {
   }
 
   static async archive(taskId) {
-    return HttpClient().post(`/task/${taskId}/archive`)
+    return HttpClient().put(`/task/${taskId}/archive`)
+  }
+
+  static async unarchive(taskId) {
+    return HttpClient().put(`/task/${taskId}/unarchive`)
   }
 
 }

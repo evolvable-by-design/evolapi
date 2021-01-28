@@ -1,13 +1,12 @@
 class User {
 
-  constructor(id, username, password, email, role, starredProjects) {
+  constructor(id, username, password, email, role) {
     this.id = id;
     this.username = username;
     this.email = email;
     this.confirmedEmail = false;
     this.password = password;
     this.role = role;
-    this.starredProjects = starredProjects || [];
   }
 
   confirmEmail() {
@@ -26,8 +25,6 @@ class User {
   withoutPasswordRepresentation(reverseRouter) {
     const representation = Object.assign({}, this);
     representation['password'] = undefined;
-    representation['starredProjects'] = this.starredProjects
-      .map(projectId => reverseRouter.forProject(projectId))
     return representation;
   }
 

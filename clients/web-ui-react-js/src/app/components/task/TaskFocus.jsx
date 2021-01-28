@@ -60,7 +60,7 @@ function taskActions(task, onOperationInvokationSuccess, history, userProfile) {
     Update: () => <UpdateTaskDialog task={task} isShown={true} {...commonProps} />,
     Delete: () => <ConfirmOperationDialog operation={() => TaskService.delete(task.id)} title='Delete' {...commonProps} intent='danger' />,
     Archive: () => <ConfirmOperationDialog operation={() => TaskService.archive(task.id)} title='Archive' {...commonProps} />,
-    Unarchive: () => <ConfirmOperationDialog operation={() => TaskService.archive(task.id)} title='Unarchive' {...commonProps} />,
+    Unarchive: () => <ConfirmOperationDialog operation={() => TaskService.unarchive(task.id)} title='Unarchive' {...commonProps} />,
   }
 
   if (userProfile?.role !== 'ProductOwner') delete actions['Delete']

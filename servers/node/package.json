@@ -1,6 +1,6 @@
 {
   "name": "server",
-  "version": "15.0.0",
+  "version": "16.0.0",
   "description": "Server of Evol API implemented with Node",
   "main": "index.js",
   "scripts": {

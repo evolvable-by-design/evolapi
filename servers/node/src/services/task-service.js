@@ -95,11 +95,18 @@ class TaskService {
     }
   }
 
-  switchArchivedStatus(taskId) {
+  archive(taskId) {
+    this._archive(taskId, true)
+  }
+
+  unarchive(taskId) {
+    this._archive(taskId, false)
+  }
+
+  _archive(taskId, newState) {
     const task = this.findByIdOrFail(taskId)
-    task.isArchived = !task.isArchived
+    task.isArchived = newState
     this.analyticService.update(taskId);
-    return task.isArchived
   }
 
   _isStatusUpdateAuthorized(task, project, newStatus) {
