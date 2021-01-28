@@ -137,13 +137,13 @@ type taskStatusTransitions = Array<{
 1. 6
 2. 1
 3. 1
-4. 1
-5. 3
+4. 1 (going from v6 to any previous version)
+5. 8
 6. 2
 7. 5
 8. 3
 9. 2
-10. 1
+10. 1 (from v9.0.0 to v8.0.1)
 11. 1
 12. 1
 13. 1
